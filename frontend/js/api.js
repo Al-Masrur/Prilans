@@ -169,5 +169,45 @@ const api = {
 
     async deleteAdminUser(id) {
         return this.store.deleteUser(id);
+    },
+
+    // Companies, Messages & Notifications
+    async getCompanies() {
+        return this.store.getCompanies();
+    },
+
+    async getConversations() {
+        const uid = this.getUserId();
+        if (!uid) return [];
+        return this.store.getConversations(uid);
+    },
+
+    async getThreadMessages(peerId) {
+        const uid = this.getUserId();
+        if (!uid) return { peer: null, messages: [] };
+        return this.store.getThreadMessages(uid, peerId);
+    },
+
+    async sendMessage(peerId, text) {
+        const uid = this.getUserId();
+        if (!uid) throw new Error("Please sign in to send messages");
+        return this.store.sendMessage(uid, peerId, text);
+    },
+
+    async getAllContacts() {
+        const uid = this.getUserId();
+        return this.store.db.users.filter(u => u.id !== uid && u.role !== "admin");
+    },
+
+    async getNotifications() {
+        const uid = this.getUserId();
+        if (!uid) return [];
+        return this.store.getNotifications(uid);
+    },
+
+    async markAllNotificationsRead() {
+        const uid = this.getUserId();
+        if (!uid) return;
+        this.store.markAllNotificationsRead(uid);
     }
 };

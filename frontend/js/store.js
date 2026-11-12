@@ -13,6 +13,8 @@ class PrilansStore {
         if (data) {
             try {
                 this.db = JSON.parse(data);
+                if (!Array.isArray(this.db.messages)) this.db.messages = this._defaultMessages();
+                if (!Array.isArray(this.db.notifications)) this.db.notifications = this._defaultNotifications();
                 return;
             } catch (e) {
                 console.error("Failed to parse storage, reinitializing", e);
@@ -361,10 +363,79 @@ class PrilansStore {
                     comment: "Great work ethic and creative eye. Will definitely hire again!",
                     created_at: hours(48)
                 }
-            ]
+            ],
+            messages: this._defaultMessages(),
+            notifications: this._defaultNotifications()
         };
 
         this.save();
+    }
+
+    _defaultMessages() {
+        const now = Date.now();
+        const mins = (m) => new Date(now - m * 60 * 1000).toISOString();
+        const hours = (h) => new Date(now - h * 60 * 60 * 1000).toISOString();
+        return [
+            {
+                id: 1,
+                sender_id: 4,
+                receiver_id: 1,
+                text: "Hi Akramul! We reviewed your UI/UX portfolio and would love to discuss HAV's Website Redesign.",
+                created_at: hours(3),
+                read: false
+            },
+            {
+                id: 2,
+                sender_id: 1,
+                receiver_id: 4,
+                text: "Thank you! I'm available this week and can share a quick Figma wireframe preview.",
+                created_at: hours(2),
+                read: true
+            },
+            {
+                id: 3,
+                sender_id: 5,
+                receiver_id: 1,
+                text: "Hello, are you open to a short-term landing page sprint for EduCourse Global?",
+                created_at: mins(35),
+                read: false
+            }
+        ];
+    }
+
+    _defaultNotifications() {
+        const now = Date.now();
+        const mins = (m) => new Date(now - m * 60 * 1000).toISOString();
+        const hours = (h) => new Date(now - h * 60 * 60 * 1000).toISOString();
+        return [
+            {
+                id: 1,
+                user_id: 1,
+                type: "status",
+                title: "Proposal Shortlisted",
+                message: "HAV Design Studio shortlisted your proposal for \"Let's Collaborate on HAV's Website Redesign\".",
+                created_at: hours(2),
+                read: false
+            },
+            {
+                id: 2,
+                user_id: 1,
+                type: "review",
+                title: "New 5★ Review Received",
+                message: "Bengal Digital Media left you a 5-star review for your WordPress layout work.",
+                created_at: hours(24),
+                read: true
+            },
+            {
+                id: 3,
+                user_id: 4,
+                type: "proposal",
+                title: "New Student Proposal",
+                message: "Sarah Jenkins submitted a proposal for \"Build Student Assessment Portal with Python & React\".",
+                created_at: mins(45),
+                read: false
+            }
+        ];
     }
 
     // -----------------------------------------------------------------------
@@ -614,8 +685,17 @@ class PrilansStore {
         if (filters.keyword) {
             const kw = filters.keyword.toLowerCase();
             list = list.filter(p => {
-                const combined = `${p.title} ${p.description} ${p.category} ${(p.skills || []).join(" ")}`.toLowerCase();
+                const combined = `${p.title} ${p.description} ${p.category} ${p.client_name} ${(p.skills || []).join(" ")}`.toLowerCase();
                 return combined.includes(kw);
+            });
+        }
+
+        // Filter: Location
+        if (filters.location) {
+            const loc = filters.location.toLowerCase();
+            list = list.filter(p => {
+                const combined = `${p.client_country || ""} ${p.location || ""}`.toLowerCase();
+                return combined.includes(loc);
             });
         }
 
@@ -652,6 +732,15 @@ class PrilansStore {
             status: "open"
         };
         this.db.projects.unshift(newProject);
+        this.db.notifications.unshift({
+            id: Date.now() + 1,
+            user_id: "all",
+            type: "project",
+            title: "New Project Published",
+            message: `${clientUser.name} posted "${newProject.title}" (${newProject.category}).`,
+            created_at: new Date().toISOString(),
+            read: false
+        });
         this.save();
         return newProject;
     }
@@ -685,6 +774,18 @@ class PrilansStore {
         };
 
         this.db.applications.unshift(newApp);
+        const proj = this.db.projects.find(p => p.id === pid);
+        if (proj) {
+            this.db.notifications.unshift({
+                id: Date.now() + 1,
+                user_id: proj.client_id,
+                type: "proposal",
+                title: "New Proposal Received",
+                message: `${studentUser.name} applied for "${proj.title}" at $${newApp.bid_amount}.`,
+                created_at: new Date().toISOString(),
+                read: false
+            });
+        }
         this.save();
         return newApp;
     }
@@ -733,6 +834,16 @@ class PrilansStore {
         if (!app) throw new Error("Application not found");
         app.status = newStatus;
         app.updated_at = new Date().toISOString();
+        const proj = this.db.projects.find(p => p.id === app.project_id);
+        this.db.notifications.unshift({
+            id: Date.now() + 1,
+            user_id: app.student_id,
+            type: "status",
+            title: `Proposal ${newStatus}`,
+            message: `Your application for "${proj ? proj.title : 'Project'}" is now ${newStatus}.`,
+            created_at: new Date().toISOString(),
+            read: false
+        });
         this.save();
         return app;
     }
@@ -752,6 +863,15 @@ class PrilansStore {
             created_at: new Date().toISOString()
         };
         this.db.reviews.unshift(review);
+        this.db.notifications.unshift({
+            id: Date.now() + 1,
+            user_id: review.reviewee_id,
+            type: "review",
+            title: `New ${review.rating}★ Review Received`,
+            message: `${reviewerUser.name} left a ${review.rating}-star review: "${review.comment}"`,
+            created_at: new Date().toISOString(),
+            read: false
+        });
         this.save();
         return review;
     }
@@ -915,8 +1035,150 @@ class PrilansStore {
                 role: u.role,
                 country: u.country,
                 created_at: u.created_at
+            })),
+            projects: this.db.projects.map(p => ({
+                id: p.id,
+                title: p.title,
+                client_name: p.client_name,
+                category: p.category,
+                project_type: p.project_type,
+                budget: p.budget,
+                status: p.status,
+                created_at: p.created_at
             }))
         };
+    }
+
+    // -----------------------------------------------------------------------
+    // COMPANIES, MESSAGES & NOTIFICATIONS
+    // -----------------------------------------------------------------------
+    getCompanies() {
+        return this.db.users
+            .filter(u => u.role === "client")
+            .map(c => {
+                const companyProjects = this.db.projects.filter(p => p.client_id === c.id);
+                const openProjects = companyProjects.filter(p => p.status === "open");
+                const reviewStats = this.getUserReviewStats(c.id);
+                return {
+                    id: c.id,
+                    name: c.name,
+                    email: c.email,
+                    country: c.country || "United States",
+                    avatar_url: c.avatar_url || "",
+                    bio: (c.profile && c.profile.bio) || "Verified employer hiring talented university students.",
+                    open_projects_count: openProjects.length,
+                    total_projects_count: companyProjects.length,
+                    average_rating: reviewStats.average_rating,
+                    review_count: reviewStats.total_reviews,
+                    recent_projects: openProjects.slice(0, 3).map(p => ({ id: p.id, title: p.title, budget: p.budget, project_type: p.project_type }))
+                };
+            });
+    }
+
+    getConversations(userId) {
+        const uid = parseInt(userId);
+        const peerMap = new Map();
+
+        (this.db.messages || []).forEach(m => {
+            if (m.sender_id !== uid && m.receiver_id !== uid) return;
+            const peerId = m.sender_id === uid ? m.receiver_id : m.sender_id;
+            const existing = peerMap.get(peerId);
+            const isUnread = m.receiver_id === uid && !m.read;
+            if (!existing) {
+                peerMap.set(peerId, { lastMessage: m, unreadCount: isUnread ? 1 : 0 });
+            } else {
+                if (new Date(m.created_at) > new Date(existing.lastMessage.created_at)) {
+                    existing.lastMessage = m;
+                }
+                if (isUnread) existing.unreadCount += 1;
+            }
+        });
+
+        // Also include contacts the user can message if no thread exists yet
+        const threads = [];
+        peerMap.forEach((val, peerId) => {
+            const peer = this.findUserById(peerId);
+            if (!peer) return;
+            threads.push({
+                peer_id: peer.id,
+                peer_name: peer.name,
+                peer_role: peer.role,
+                peer_avatar: peer.avatar_url || "",
+                last_message: val.lastMessage.text,
+                last_at: val.lastMessage.created_at,
+                unread_count: val.unreadCount
+            });
+        });
+
+        threads.sort((a, b) => new Date(b.last_at) - new Date(a.last_at));
+        return threads;
+    }
+
+    getThreadMessages(userId, peerId) {
+        const uid = parseInt(userId);
+        const pid = parseInt(peerId);
+        let updated = false;
+        const msgs = (this.db.messages || [])
+            .filter(m => (m.sender_id === uid && m.receiver_id === pid) || (m.sender_id === pid && m.receiver_id === uid))
+            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+        msgs.forEach(m => {
+            if (m.receiver_id === uid && !m.read) {
+                m.read = true;
+                updated = true;
+            }
+        });
+        if (updated) this.save();
+
+        return {
+            peer: this.findUserById(pid),
+            messages: msgs
+        };
+    }
+
+    sendMessage(senderId, receiverId, text) {
+        const sid = parseInt(senderId);
+        const rid = parseInt(receiverId);
+        const sender = this.findUserById(sid);
+        const msg = {
+            id: Date.now(),
+            sender_id: sid,
+            receiver_id: rid,
+            text: text.trim(),
+            created_at: new Date().toISOString(),
+            read: false
+        };
+        if (!Array.isArray(this.db.messages)) this.db.messages = [];
+        this.db.messages.push(msg);
+        if (!Array.isArray(this.db.notifications)) this.db.notifications = [];
+        this.db.notifications.unshift({
+            id: Date.now() + 1,
+            user_id: rid,
+            type: "message",
+            title: `New Message from ${sender ? sender.name : "User"}`,
+            message: msg.text.slice(0, 80),
+            created_at: msg.created_at,
+            read: false
+        });
+        this.save();
+        return msg;
+    }
+
+    getNotifications(userId) {
+        const uid = parseInt(userId);
+        return (this.db.notifications || [])
+            .filter(n => n.user_id === uid || n.user_id === "all")
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+
+    markAllNotificationsRead(userId) {
+        const uid = parseInt(userId);
+        (this.db.notifications || []).forEach(n => {
+            if (n.user_id === uid || n.user_id === "all") {
+                n.read = true;
+            }
+        });
+        this.save();
     }
 
     deleteUser(userId) {

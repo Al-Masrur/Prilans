@@ -105,8 +105,29 @@ function updateUserUI() {
         }
     }
 
-    // Update proposal count in sidebar badge
+    // Update proposal, messages & notifications badges in sidebar
     updateMyProposalsBadge();
+    updateSidebarBadges();
+}
+
+async function updateSidebarBadges() {
+    try {
+        const convos = await api.getConversations();
+        const unreadMsgs = convos.reduce((sum, c) => sum + (c.unread_count || 0), 0);
+        const msgBadge = document.getElementById("messagesBadge");
+        if (msgBadge) {
+            msgBadge.textContent = unreadMsgs;
+            msgBadge.classList.toggle("hidden", unreadMsgs === 0);
+        }
+
+        const notifs = await api.getNotifications();
+        const unreadNotifs = notifs.filter(n => !n.read).length;
+        const notifBadge = document.getElementById("notificationsBadge");
+        if (notifBadge) {
+            notifBadge.textContent = unreadNotifs;
+            notifBadge.classList.toggle("hidden", unreadNotifs === 0);
+        }
+    } catch (e) {}
 }
 
 async function updateMyProposalsBadge() {
@@ -294,22 +315,31 @@ function switchNav(nav) {
     activeNav = nav;
     
     // Highlight sidebar items
-    const navItems = ["projects", "recommendations", "freelancers", "proposals", "admin"];
+    const navItems = ["projects", "recommendations", "freelancers", "companies", "proposals", "messages", "notifications", "admin"];
     navItems.forEach(item => {
         const el = document.getElementById(`nav-${item}`);
         if (!el) return;
         if (item === nav) {
-            el.className = "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 bg-slate-100 transition-colors";
+            el.className = "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-900 bg-slate-100 transition-all";
         } else {
-            el.className = "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors";
+            el.className = "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all";
         }
     });
 
     // Hide/show views
-    document.getElementById("projectsContainer").classList.add("hidden");
-    document.getElementById("proposalsViewContainer").classList.add("hidden");
-    document.getElementById("freelancersViewContainer").classList.add("hidden");
-    document.getElementById("adminViewContainer").classList.add("hidden");
+    const viewIds = [
+        "projectsContainer",
+        "proposalsViewContainer",
+        "freelancersViewContainer",
+        "companiesViewContainer",
+        "messagesViewContainer",
+        "notificationsViewContainer",
+        "adminViewContainer"
+    ];
+    viewIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+    });
 
     if (nav === "projects") {
         document.getElementById("projectsContainer").classList.remove("hidden");
@@ -320,9 +350,18 @@ function switchNav(nav) {
     } else if (nav === "freelancers") {
         document.getElementById("freelancersViewContainer").classList.remove("hidden");
         loadFreelancers();
+    } else if (nav === "companies") {
+        document.getElementById("companiesViewContainer").classList.remove("hidden");
+        loadCompanies();
     } else if (nav === "proposals") {
         document.getElementById("proposalsViewContainer").classList.remove("hidden");
         loadMyApplications();
+    } else if (nav === "messages") {
+        document.getElementById("messagesViewContainer").classList.remove("hidden");
+        loadMessages();
+    } else if (nav === "notifications") {
+        document.getElementById("notificationsViewContainer").classList.remove("hidden");
+        loadNotifications();
     } else if (nav === "admin") {
         document.getElementById("adminViewContainer").classList.remove("hidden");
         loadAdminDashboard();
@@ -364,6 +403,8 @@ async function loadProjects() {
 
 function getActiveFilters() {
     const keyword = document.getElementById("searchInput").value.trim();
+    const locEl = document.getElementById("locationInput");
+    const location = locEl ? locEl.value.trim() : "";
     const category = document.getElementById("filterCategory").value;
     
     // Experience
@@ -382,6 +423,7 @@ function getActiveFilters() {
 
     return {
         keyword,
+        location,
         category,
         experience_level,
         project_type: activeFilterProjectType,
@@ -452,10 +494,12 @@ function renderProjects(projects, isRecommended = false) {
     }
 
     container.innerHTML = projects.map(p => {
-        const rateFormatted = p.project_type === "Hourly" ? `$${p.budget.toFixed(2)}/hr` : `$${p.budget.toFixed(2)}`;
+        const budgetVal = Number(p.budget || 0);
+        const rateFormatted = p.project_type === "Hourly" ? `$${budgetVal.toFixed(2)}/hr` : `$${budgetVal.toFixed(2)}`;
         const proposalsCount = p.proposals_count || 0;
         const relativeTime = formatTimeAgo(p.created_at);
-        const skillsTags = (p.skills || []).map(s => `
+        const skillsArr = Array.isArray(p.skills) ? p.skills : [];
+        const skillsTags = skillsArr.map(s => `
             <span class="skill-tag">${s}</span>
         `).join("");
 
@@ -545,7 +589,7 @@ function renderProjects(projects, isRecommended = false) {
         `;
     }).join("");
 
-    lucide.createIcons();
+    if (typeof lucide !== "undefined") lucide.createIcons();
 }
 
 function escapeQuote(str) {
@@ -981,15 +1025,312 @@ async function loadFreelancers() {
                     </div>
                     <div class="flex items-center justify-between pt-2.5 border-t border-slate-100">
                         <span class="text-xs font-bold text-slate-900 font-mono">$${s.hourly_rate}/hr</span>
-                        <button onclick="showToast('Contact request initiated with ${s.name}')" class="px-3 py-1 rounded-md bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition-colors">Contact</button>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="openStudentDetailModal(${s.id})" class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200 transition-colors">Profile</button>
+                            <button onclick="startMessageWith(${s.id})" class="px-3 py-1 rounded-md bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition-colors">Message</button>
+                        </div>
                     </div>
                 </div>
             `;
         }).join("");
-        lucide.createIcons();
+        if (typeof lucide !== "undefined") lucide.createIcons();
     } catch (err) {
         container.innerHTML = `<div class="p-3 text-xs text-rose-600">${err.message}</div>`;
     }
+}
+
+async function openStudentDetailModal(studentId) {
+    try {
+        const students = await api.listStudents();
+        const s = students.find(x => x.id === parseInt(studentId));
+        if (!s) return showToast("Student profile not found", "error");
+
+        const reviewStats = await api.getUserReviews(s.id);
+        document.getElementById("studentDetailName").textContent = `${s.name} — Student Profile`;
+
+        const skillsHtml = (s.skills || []).map(sk => `
+            <span class="skill-tag">${sk.skill_name} <span class="ml-1 text-[10px] text-slate-400">(${sk.proficiency})</span></span>
+        `).join("") || `<span class="text-xs text-slate-400">No skills listed yet</span>`;
+
+        const portfolioHtml = (s.portfolios || []).map(p => `
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60">
+                <div class="flex items-center justify-between">
+                    <h5 class="text-xs font-bold text-slate-900">${p.title}</h5>
+                    ${p.project_url ? `<a href="${p.project_url}" target="_blank" class="text-[11px] font-semibold text-blue-600 hover:underline">Live Demo ↗</a>` : ''}
+                </div>
+                <p class="text-[11px] text-slate-600 mt-1">${p.description}</p>
+                ${p.tags ? `<p class="text-[10px] text-slate-400 mt-1.5 font-medium">${p.tags}</p>` : ''}
+            </div>
+        `).join("") || `<p class="text-xs text-slate-400">No portfolio items added yet.</p>`;
+
+        const reviewsHtml = (reviewStats.reviews || []).map(r => `
+            <div class="p-3 rounded-xl border border-slate-100 bg-white">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="font-bold text-slate-800">${r.reviewer_name}</span>
+                    <span class="text-amber-500 font-bold">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-1">${r.comment}</p>
+            </div>
+        `).join("") || `<p class="text-xs text-slate-400">No reviews yet.</p>`;
+
+        document.getElementById("studentDetailBody").innerHTML = `
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="${s.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" class="w-14 h-14 rounded-full object-cover border border-slate-200" />
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900">${s.name}</h4>
+                        <p class="text-xs text-slate-500">${s.university} • ${s.major}</p>
+                        <div class="flex items-center gap-2 mt-1 text-xs">
+                            <span class="font-bold text-amber-500">★ ${reviewStats.average_rating}</span>
+                            <span class="text-slate-400">(${reviewStats.total_reviews} reviews)</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">${s.availability_status}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-base font-bold font-mono text-slate-900">$${s.hourly_rate}/hr</div>
+                    <button onclick="closeModal('modalStudentDetail'); startMessageWith(${s.id});" class="mt-1.5 px-3 py-1 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800">Message</button>
+                </div>
+            </div>
+            <div>
+                <h5 class="text-xs font-bold text-slate-900 mb-1.5">About</h5>
+                <p class="text-xs text-slate-600 leading-relaxed">${s.bio || 'No bio provided.'}</p>
+            </div>
+            <div>
+                <h5 class="text-xs font-bold text-slate-900 mb-2">Skills & Proficiency</h5>
+                <div class="flex flex-wrap gap-1.5">${skillsHtml}</div>
+            </div>
+            <div>
+                <h5 class="text-xs font-bold text-slate-900 mb-2">Portfolio Case Studies</h5>
+                <div class="space-y-2">${portfolioHtml}</div>
+            </div>
+            <div>
+                <h5 class="text-xs font-bold text-slate-900 mb-2">Client Reviews</h5>
+                <div class="space-y-2">${reviewsHtml}</div>
+            </div>
+        `;
+        document.getElementById("modalStudentDetail").classList.remove("hidden");
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+}
+
+// ---------------------------------------------------------------------------
+// COMPANIES VIEW
+// ---------------------------------------------------------------------------
+async function loadCompanies() {
+    const container = document.getElementById("companiesList");
+    try {
+        const companies = await api.getCompanies();
+        if (!companies.length) {
+            container.innerHTML = `<div class="col-span-full py-10 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">No companies found.</div>`;
+            return;
+        }
+        container.innerHTML = companies.map(c => {
+            const recentHtml = (c.recent_projects || []).map(p => `
+                <div class="flex items-center justify-between text-[11px] py-1 border-b border-slate-100 last:border-0">
+                    <span class="text-slate-700 font-medium truncate pr-2">${p.title}</span>
+                    <span class="font-mono font-bold text-slate-900 shrink-0">$${p.budget}${p.project_type === 'Hourly' ? '/hr' : ''}</span>
+                </div>
+            `).join("") || `<p class="text-[11px] text-slate-400">No open projects currently.</p>`;
+
+            return `
+                <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="flex items-center gap-3">
+                                <img src="${c.avatar_url || 'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(c.name)}" class="w-11 h-11 rounded-xl object-cover border border-slate-200 bg-slate-50" />
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900">${c.name}</h4>
+                                    <p class="text-[11px] text-slate-500 flex items-center gap-1">
+                                        <i data-lucide="map-pin" class="w-3 h-3"></i> ${c.country} • <span class="text-emerald-600 font-semibold">Verified</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-700">${c.open_projects_count} Open</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-3">${c.bio}</p>
+                        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 mb-3">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Active Openings</p>
+                            ${recentHtml}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                        <button onclick="startMessageWith(${c.id})" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors">Message</button>
+                        <button onclick="viewCompanyProjects('${escapeQuote(c.name)}')" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors">View Projects</button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+        if (typeof lucide !== "undefined") lucide.createIcons();
+    } catch (err) {
+        container.innerHTML = `<div class="p-3 text-xs text-rose-600">${err.message}</div>`;
+    }
+}
+
+function viewCompanyProjects(companyName) {
+    document.getElementById("searchInput").value = companyName;
+    switchNav("projects");
+}
+
+// ---------------------------------------------------------------------------
+// MESSAGES VIEW
+// ---------------------------------------------------------------------------
+let activeChatPeerId = null;
+
+async function loadMessages(preselectPeerId = null) {
+    try {
+        const contacts = await api.getAllContacts();
+        const selectEl = document.getElementById("newChatContactSelect");
+        if (selectEl) {
+            selectEl.innerHTML = `<option value="">+ New Chat</option>` + contacts.map(c => `<option value="${c.id}">${c.name} (${c.role})</option>`).join("");
+        }
+
+        const convos = await api.getConversations();
+        const listEl = document.getElementById("conversationsList");
+        if (!convos.length && !preselectPeerId) {
+            listEl.innerHTML = `<p class="text-xs text-slate-400 py-6 text-center">No messages yet. Pick a contact above to start chatting.</p>`;
+            document.getElementById("activeChatMessages").innerHTML = "";
+            document.getElementById("sendMessageForm").classList.add("hidden");
+        } else {
+            listEl.innerHTML = convos.map(c => {
+                const isSelected = activeChatPeerId === c.peer_id;
+                return `
+                    <button onclick="openMessageThread(${c.peer_id})" class="w-full text-left p-2.5 rounded-xl border transition-colors ${isSelected ? 'bg-slate-900 text-white border-slate-900' : 'bg-white hover:bg-slate-50 border-slate-100 text-slate-800'}">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold truncate">${c.peer_name}</span>
+                            ${c.unread_count > 0 ? `<span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-rose-600 text-white">${c.unread_count}</span>` : `<span class="text-[10px] ${isSelected ? 'text-slate-300' : 'text-slate-400'}">${formatTimeAgo(c.last_at)}</span>`}
+                        </div>
+                        <p class="text-[11px] truncate mt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}">${c.last_message}</p>
+                    </button>
+                `;
+            }).join("");
+        }
+
+        const targetPeer = preselectPeerId || activeChatPeerId || (convos[0] && convos[0].peer_id);
+        if (targetPeer) {
+            await openMessageThread(targetPeer);
+        }
+        updateSidebarBadges();
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+}
+
+async function openMessageThread(peerId) {
+    activeChatPeerId = parseInt(peerId);
+    const data = await api.getThreadMessages(activeChatPeerId);
+    const headerEl = document.getElementById("activeChatHeader");
+    const msgsEl = document.getElementById("activeChatMessages");
+    const formEl = document.getElementById("sendMessageForm");
+
+    if (data.peer) {
+        headerEl.innerHTML = `
+            <div class="flex items-center gap-2.5">
+                <span class="text-xs font-bold text-slate-900">${data.peer.name}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-200/70 text-slate-700 capitalize">${data.peer.role}</span>
+            </div>
+            <span class="text-[11px] text-slate-400">${data.peer.email}</span>
+        `;
+    }
+    formEl.classList.remove("hidden");
+
+    if (!data.messages.length) {
+        msgsEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Start the conversation with ${data.peer ? data.peer.name : 'this user'}.</p>`;
+    } else {
+        msgsEl.innerHTML = data.messages.map(m => {
+            const isMine = currentUser && m.sender_id === currentUser.id;
+            return `
+                <div class="flex ${isMine ? 'justify-end' : 'justify-start'}">
+                    <div class="max-w-[75%] px-3.5 py-2 rounded-2xl text-xs ${isMine ? 'bg-slate-900 text-white rounded-br-xs' : 'bg-white border border-slate-200 text-slate-800 rounded-bl-xs'}">
+                        <p class="leading-relaxed">${m.text}</p>
+                        <p class="text-[10px] mt-1 ${isMine ? 'text-slate-300' : 'text-slate-400'}">${formatTimeAgo(m.created_at)}</p>
+                    </div>
+                </div>
+            `;
+        }).join("");
+        msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+
+    // Refresh conversation list highlight and unread badges
+    const convos = await api.getConversations();
+    const listEl = document.getElementById("conversationsList");
+    if (convos.length) {
+        listEl.innerHTML = convos.map(c => {
+            const isSelected = activeChatPeerId === c.peer_id;
+            return `
+                <button onclick="openMessageThread(${c.peer_id})" class="w-full text-left p-2.5 rounded-xl border transition-colors ${isSelected ? 'bg-slate-900 text-white border-slate-900' : 'bg-white hover:bg-slate-50 border-slate-100 text-slate-800'}">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-bold truncate">${c.peer_name}</span>
+                        ${c.unread_count > 0 ? `<span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-rose-600 text-white">${c.unread_count}</span>` : `<span class="text-[10px] ${isSelected ? 'text-slate-300' : 'text-slate-400'}">${formatTimeAgo(c.last_at)}</span>`}
+                    </div>
+                    <p class="text-[11px] truncate mt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}">${c.last_message}</p>
+                </button>
+            `;
+        }).join("");
+    }
+    updateSidebarBadges();
+    if (typeof lucide !== "undefined") lucide.createIcons();
+}
+
+async function handleSendMessage(e) {
+    e.preventDefault();
+    if (!activeChatPeerId) return;
+    const input = document.getElementById("chatMessageInput");
+    const text = input.value.trim();
+    if (!text) return;
+    try {
+        await api.sendMessage(activeChatPeerId, text);
+        input.value = "";
+        await openMessageThread(activeChatPeerId);
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+}
+
+function startNewChatFromSelect(peerId) {
+    if (!peerId) return;
+    openMessageThread(parseInt(peerId));
+}
+
+function startMessageWith(peerId) {
+    activeChatPeerId = parseInt(peerId);
+    switchNav("messages");
+}
+
+// ---------------------------------------------------------------------------
+// NOTIFICATIONS VIEW
+// ---------------------------------------------------------------------------
+async function loadNotifications() {
+    const container = document.getElementById("notificationsList");
+    try {
+        const notifs = await api.getNotifications();
+        if (!notifs.length) {
+            container.innerHTML = `<div class="py-10 text-center text-xs text-slate-400">You're all caught up! No notifications yet.</div>`;
+            return;
+        }
+        container.innerHTML = notifs.map(n => `
+            <div class="py-3.5 flex items-start justify-between gap-3 ${n.read ? 'opacity-75' : ''}">
+                <div class="flex items-start gap-3">
+                    <span class="mt-1 w-2 h-2 rounded-full shrink-0 ${n.read ? 'bg-slate-300' : 'bg-blue-600'}"></span>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900">${n.title}</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">${n.message}</p>
+                    </div>
+                </div>
+                <span class="text-[11px] text-slate-400 shrink-0">${formatTimeAgo(n.created_at)}</span>
+            </div>
+        `).join("");
+        updateSidebarBadges();
+    } catch (err) {
+        container.innerHTML = `<div class="p-3 text-xs text-rose-600">${err.message}</div>`;
+    }
+}
+
+async function markNotificationsRead() {
+    await api.markAllNotificationsRead();
+    showToast("All notifications marked as read");
+    await loadNotifications();
 }
 
 // ---------------------------------------------------------------------------
@@ -1044,6 +1385,34 @@ async function loadAdminDashboard() {
             </tr>
         `).join("");
 
+        // Render Project Moderation Table
+        const projectsTable = document.getElementById("adminProjectsTable");
+        if (projectsTable) {
+            projectsTable.innerHTML = (stats.projects || []).map(p => `
+                <tr class="hover:bg-slate-50">
+                    <td class="py-2 px-3 font-semibold text-slate-900">${p.title}</td>
+                    <td class="py-2 px-3 text-slate-600">${p.client_name}</td>
+                    <td class="py-2 px-3 text-slate-600">${p.category}</td>
+                    <td class="py-2 px-3 font-mono font-semibold text-slate-900">$${p.budget}${p.project_type === 'Hourly' ? '/hr' : ''}</td>
+                    <td class="py-2 px-3">
+                        <button onclick="deleteAdminProject(${p.id})" class="text-rose-600 hover:underline font-semibold">Remove</button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+}
+
+async function deleteAdminProject(id) {
+    if (!confirm("Are you sure you want to remove this project?")) return;
+    try {
+        await api.deleteProject(id);
+        showToast("Project removed");
+        loadAdminDashboard();
+        await updateDynamicFilterCounts();
     } catch (err) {
         showToast(err.message, "error");
     }
