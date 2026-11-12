@@ -8,23 +8,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Custom CSS -->
+  <!-- Custom Modern Design System CSS -->
   <link rel="stylesheet" href="/css/custom.css" />
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#f8fafc',
-              100: '#f1f5f9',
-              200: '#e2e8f0',
-              300: '#cbd5e1',
-              400: '#94a3b8',
-              500: '#64748b',
-              600: '#475569',
-              700: '#334155',
-              800: '#1e293b',
+            slate: {
+              850: '#151f32',
               900: '#0f172a',
             }
           }
@@ -33,111 +25,112 @@
     }
   </script>
 </head>
-<body class="bg-[#fafbfc] text-slate-800 antialiased flex h-screen overflow-hidden">
+<body class="bg-slate-50 text-slate-900 antialiased flex h-screen overflow-hidden">
 
   <!-- ========================================================================= -->
-  <!-- LEFT SIDEBAR (Identical layout to screenshot)                             -->
+  <!-- LEFT SIDEBAR                                                              -->
   <!-- ========================================================================= -->
-  <aside class="w-72 bg-white border-r border-slate-200/80 flex flex-col justify-between shrink-0 select-none overflow-y-auto">
+  <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 select-none overflow-y-auto">
     <div>
-      <!-- Top Brand Logo & Platform Title -->
-      <div class="p-6 pb-4 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-sm">
-            <i data-lucide="layers" class="w-5 h-5"></i>
+          <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-white">
+            <i data-lucide="layers" class="w-4 h-4"></i>
           </div>
-          <span class="text-2xl font-bold tracking-tight text-slate-900">Prilans<span class="text-blue-600">.</span></span>
+          <span class="text-xl font-bold tracking-tight text-slate-900">Prilans<span class="text-blue-600">.</span></span>
         </div>
       </div>
 
-      <!-- User Profile Badge (Click to open Profile or Sign In) -->
-      <div class="px-5 py-2">
-        <div id="userProfileBadge" class="flex items-center gap-3 p-2.5 rounded-2xl border border-slate-100 bg-slate-50/70 hover:bg-slate-100/70 transition-colors cursor-pointer" onclick="handleProfileBadgeClick()">
-          <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" />
+      <!-- User Profile Badge -->
+      <div class="p-3 border-b border-slate-100">
+        <div id="userProfileBadge" class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer" onclick="handleProfileBadgeClick()">
+          <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=guest" alt="Avatar" class="w-9 h-9 rounded-full object-cover border border-slate-200" />
           <div class="flex-1 min-w-0">
-            <p id="sidebarUserName" class="text-sm font-semibold text-slate-900 truncate">Loading user...</p>
-            <p id="sidebarUserEmail" class="text-xs text-slate-500 truncate"></p>
+            <p id="sidebarUserName" class="text-xs font-semibold text-slate-900 truncate">Sign In / Register</p>
+            <p id="sidebarUserEmail" class="text-[11px] text-slate-500 truncate">Click to log in</p>
           </div>
-          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
         </div>
       </div>
 
       <!-- Navigation Links -->
-      <nav class="mt-4 px-4 space-y-1">
-        <a href="#" onclick="switchNav('projects')" id="nav-projects" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-900 bg-slate-100 transition-all">
+      <nav class="p-3 space-y-0.5">
+        <a href="#" onclick="switchNav('projects')" id="nav-projects" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 bg-slate-100 transition-colors">
           <i data-lucide="search" class="w-4 h-4 text-slate-700"></i>
           <span>Find Project</span>
         </a>
-        <a href="#" onclick="switchNav('recommendations')" id="nav-recommendations" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
-          <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+        <a href="#" onclick="switchNav('recommendations')" id="nav-recommendations" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+          <i data-lucide="sparkles" class="w-4 h-4 text-slate-500"></i>
           <span>Smart Matching</span>
-          <span class="ml-auto text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">Bonus</span>
+          <span class="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Bonus</span>
         </a>
-        <a href="#" onclick="switchNav('freelancers')" id="nav-freelancers" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+        <a href="#" onclick="switchNav('freelancers')" id="nav-freelancers" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
           <i data-lucide="users" class="w-4 h-4 text-slate-500"></i>
           <span>Find Freelancers</span>
         </a>
-        <a href="#" onclick="switchNav('proposals')" id="nav-proposals" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+        <a href="#" onclick="switchNav('proposals')" id="nav-proposals" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
           <i data-lucide="file-text" class="w-4 h-4 text-slate-500"></i>
-          <span>My Proposal</span>
-          <span id="myProposalsBadge" class="ml-auto text-xs px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 font-semibold">3</span>
+          <span>My Proposals</span>
+          <span id="myProposalsBadge" class="ml-auto text-[11px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-semibold border border-slate-200">0</span>
         </a>
-        <a href="#" onclick="switchNav('companies')" id="nav-companies" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+        <a href="#" onclick="switchNav('companies')" id="nav-companies" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
           <i data-lucide="building-2" class="w-4 h-4 text-slate-500"></i>
           <span>Companies</span>
         </a>
-        <a href="#" onclick="switchNav('messages')" id="nav-messages" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+        <a href="#" onclick="switchNav('messages')" id="nav-messages" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
           <i data-lucide="message-square" class="w-4 h-4 text-slate-500"></i>
-          <span>Message</span>
+          <span>Messages</span>
         </a>
-        <a href="#" onclick="switchNav('notifications')" id="nav-notifications" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+        <a href="#" onclick="switchNav('notifications')" id="nav-notifications" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
           <i data-lucide="bell" class="w-4 h-4 text-slate-500"></i>
-          <span>Notification</span>
+          <span>Notifications</span>
         </a>
       </nav>
 
-      <!-- Preferences Section -->
-      <div class="mt-8 px-4">
-        <p class="px-3.5 text-[11px] font-bold tracking-wider text-slate-400 uppercase">Preferences</p>
-        <div class="mt-2 space-y-1">
-          <a href="#" onclick="openProfileModal()" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+      <!-- Preferences -->
+      <div class="px-3 pt-4">
+        <p class="px-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase">Preferences</p>
+        <div class="mt-1 space-y-0.5">
+          <a href="#" onclick="openProfileModal()" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
             <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i>
-            <span>Skill Profile & Settings</span>
+            <span>Skill Profile</span>
           </a>
-          <a href="#" onclick="switchNav('admin')" id="nav-admin" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-purple-700 hover:bg-purple-50 transition-all">
-            <i data-lucide="shield-check" class="w-4 h-4 text-purple-600"></i>
+          <a href="#" onclick="switchNav('admin')" id="nav-admin" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-100 transition-colors">
+            <i data-lucide="shield-check" class="w-4 h-4 text-slate-600"></i>
             <span>Admin Dashboard</span>
           </a>
         </div>
       </div>
     </div>
 
-    <!-- Upgrade / Plus Plan Banner (Exact card from mockup) -->
-    <div class="p-4">
-      <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-4 shadow-sm relative overflow-hidden">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <h4 class="font-bold text-sm tracking-wide">Plus Plan</h4>
+    <!-- Bottom Section: Minimal Card & Demo Switcher -->
+    <div class="p-3 border-t border-slate-100 space-y-2.5">
+      <!-- Clean Plus Plan Card (Solid, No AI Gradients) -->
+      <div class="bg-slate-900 text-white rounded-xl p-3.5 border border-slate-800">
+        <div class="flex items-center justify-between mb-1.5">
+          <h4 class="font-bold text-xs">Plus Plan</h4>
+          <span class="text-[10px] font-mono text-emerald-400 font-semibold">ACTIVE</span>
         </div>
-        <p class="text-xs text-slate-300 leading-relaxed mb-3">
-          Get exclusive access to top freelance positions and competitive features only.
+        <p class="text-[11px] text-slate-400 leading-snug mb-2.5">
+          Get exclusive access to top freelance positions and verified client projects.
         </p>
-        <button onclick="showToast('Plus Plan membership active!')" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-300 hover:text-emerald-200 transition-colors">
+        <button onclick="showToast('Plus Plan membership active!')" class="text-xs font-medium text-white hover:text-slate-200 inline-flex items-center gap-1 transition-colors">
           <span>Upgrade Now</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          <i data-lucide="arrow-right" class="w-3 h-3"></i>
         </button>
       </div>
 
-      <!-- Quick Persona Switcher for Live Demonstration -->
-      <div class="mt-3 p-2 bg-slate-100 rounded-xl border border-slate-200/70 text-xs">
-        <div class="flex items-center justify-between mb-1.5 font-semibold text-slate-600">
-          <span>Switch Persona:</span>
-          <button onclick="resetDemoData()" class="text-[10px] text-blue-600 hover:underline">Reset Demo</button>
+      <!-- Quick Persona Switcher -->
+      <div class="p-2 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+        <div class="flex items-center justify-between mb-1.5 font-semibold text-slate-600 text-[11px]">
+          <span>Demo Persona:</span>
+          <button onclick="resetDemoData()" class="text-[10px] text-slate-500 hover:text-slate-900">Reset</button>
         </div>
         <div class="grid grid-cols-3 gap-1">
-          <button onclick="quickSwitchUser('student')" class="px-2 py-1 rounded bg-white font-medium hover:bg-slate-50 border border-slate-200 shadow-xs text-center truncate">Student</button>
-          <button onclick="quickSwitchUser('client')" class="px-2 py-1 rounded bg-white font-medium hover:bg-slate-50 border border-slate-200 shadow-xs text-center truncate">Client</button>
-          <button onclick="quickSwitchUser('admin')" class="px-2 py-1 rounded bg-white font-medium hover:bg-slate-50 border border-slate-200 shadow-xs text-center truncate">Admin</button>
+          <button onclick="quickSwitchUser('student')" class="px-1.5 py-1 rounded bg-white text-[11px] font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-2xs text-center truncate">Student</button>
+          <button onclick="quickSwitchUser('client')" class="px-1.5 py-1 rounded bg-white text-[11px] font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-2xs text-center truncate">Client</button>
+          <button onclick="quickSwitchUser('admin')" class="px-1.5 py-1 rounded bg-white text-[11px] font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-2xs text-center truncate">Admin</button>
         </div>
       </div>
     </div>
@@ -146,35 +139,35 @@
   <!-- ========================================================================= -->
   <!-- MAIN APPLICATION CONTENT AREA                                            -->
   <!-- ========================================================================= -->
-  <main class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-[#fafbfc]">
+  <main class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-slate-50">
     
-    <!-- Top Global Header / Search Bar (Matches Mockup) -->
-    <header class="h-20 bg-white border-b border-slate-200/80 px-8 flex items-center justify-between shrink-0 gap-6">
+    <!-- Top Global Header / Search Bar -->
+    <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0 gap-4">
       
       <!-- Search Inputs Box -->
-      <div class="flex-1 max-w-3xl flex items-center bg-slate-50 border border-slate-200 rounded-full px-2 py-1.5 shadow-xs focus-within:ring-2 focus-within:ring-slate-900/10 focus-within:border-slate-400 transition-all">
+      <div class="flex-1 max-w-2xl flex items-center bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 focus-within:border-slate-400 focus-within:bg-white transition-all">
         <!-- Keyword Search -->
-        <div class="flex items-center gap-2.5 flex-1 px-3">
-          <i data-lucide="search" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        <div class="flex items-center gap-2 flex-1 px-2">
+          <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
           <input 
             type="text" 
             id="searchInput"
-            placeholder="Web Design, Python, Logo, etc." 
-            class="w-full bg-transparent text-sm text-slate-800 placeholder-slate-400 focus:outline-none"
+            placeholder="Search Web Design, Python, Figma..." 
+            class="w-full bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
             onkeyup="if(event.key === 'Enter') handleSearch()"
           />
         </div>
 
-        <div class="h-5 w-[1px] bg-slate-200"></div>
+        <div class="h-4 w-[1px] bg-slate-200"></div>
 
         <!-- Location Search -->
-        <div class="flex items-center gap-2.5 flex-1 px-3">
-          <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        <div class="flex items-center gap-2 flex-1 px-2">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
           <input 
             type="text" 
             id="locationInput"
-            placeholder="City, state or zip code" 
-            class="w-full bg-transparent text-sm text-slate-800 placeholder-slate-400 focus:outline-none"
+            placeholder="City, country or remote" 
+            class="w-full bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
             onkeyup="if(event.key === 'Enter') handleSearch()"
           />
         </div>
@@ -182,52 +175,52 @@
         <!-- Find Projects Button -->
         <button 
           onclick="handleSearch()"
-          class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-5 py-2.5 rounded-full transition-all flex items-center gap-2 shadow-sm shrink-0">
-          <span>Find Projects</span>
+          class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors shrink-0">
+          Search
         </button>
       </div>
 
       <!-- Action Area: Post Job / View Switcher / Auth -->
-      <div class="flex items-center gap-3 shrink-0">
+      <div class="flex items-center gap-2.5 shrink-0">
         <button 
           id="btnPostProject" 
           onclick="openPostProjectModal()"
-          class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-sm transition-all">
-          <i data-lucide="plus" class="w-4 h-4"></i>
+          class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded-md transition-colors shadow-2xs">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
           <span>Post a Job</span>
         </button>
 
-        <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200/80">
-          <button class="p-1.5 rounded-md bg-white text-slate-800 shadow-xs"><i data-lucide="grid" class="w-4 h-4"></i></button>
-          <button class="p-1.5 rounded-md text-slate-500 hover:text-slate-800"><i data-lucide="list" class="w-4 h-4"></i></button>
+        <div class="flex items-center bg-slate-100 rounded-md p-0.5 border border-slate-200">
+          <button class="p-1 rounded bg-white text-slate-800 shadow-2xs"><i data-lucide="grid" class="w-3.5 h-3.5"></i></button>
+          <button class="p-1 rounded text-slate-500 hover:text-slate-800"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
         </div>
 
         <!-- Authentication Trigger Button -->
-        <button onclick="openAuthModal()" id="btnAuth" class="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors border border-slate-200 shadow-xs">
-          Sign In / Register
+        <button onclick="openAuthModal()" id="btnAuth" class="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3 py-1.5 rounded-md hover:bg-slate-100 transition-colors border border-slate-200">
+          Sign In
         </button>
       </div>
     </header>
 
-    <!-- Subheader Hero Banner (From Mockup) -->
-    <div class="bg-white border-b border-slate-200/60 px-8 py-5 flex items-center justify-between shrink-0">
+    <!-- Subheader Hero Banner -->
+    <div class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-          <span>Find Millions of Projects Here!</span>
+        <h1 class="text-xl font-bold tracking-tight text-slate-900">
+          Find Millions of Projects Here!
         </h1>
-        <p class="text-sm text-slate-500 mt-1">
-          Explore our curated project opportunities and apply for the top positions available today.
+        <p class="text-xs text-slate-500 mt-0.5">
+          Explore curated project opportunities and connect university skills with real clients.
         </p>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="setTab('all')" id="tab-all" class="px-4 py-2 rounded-full text-xs font-semibold bg-slate-900 text-white transition-all shadow-xs">
+      <div class="flex items-center gap-1.5">
+        <button onclick="setTab('all')" id="tab-all" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-slate-900 text-white transition-colors">
           Browse Projects
         </button>
-        <button onclick="setTab('recommended')" id="tab-recommended" class="px-4 py-2 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all flex items-center gap-1.5">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+        <button onclick="setTab('recommended')" id="tab-recommended" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3 h-3 text-slate-500"></i>
           <span>Recommended For You</span>
         </button>
-        <button onclick="setTab('proposals')" id="tab-proposals" class="px-4 py-2 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">
+        <button onclick="setTab('proposals')" id="tab-proposals" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
           My Applications
         </button>
       </div>
@@ -237,153 +230,151 @@
     <div class="flex-1 flex overflow-hidden">
       
       <!-- ========================================================================= -->
-      <!-- LEFT FILTER PANEL (Dynamic computed counts - zero hardcoding)             -->
+      <!-- LEFT FILTER PANEL                                                         -->
       <!-- ========================================================================= -->
-      <aside class="w-72 bg-white border-r border-slate-200/80 p-6 overflow-y-auto shrink-0 select-none">
-        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
-          <h3 class="font-bold text-base text-slate-900">Filters</h3>
-          <button onclick="resetFilters()" class="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline">Reset</button>
+      <aside class="w-64 bg-white border-r border-slate-200 p-5 overflow-y-auto shrink-0 select-none space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-900">Filters</h3>
+          <button onclick="resetFilters()" class="text-xs font-semibold text-blue-600 hover:text-blue-700">Reset</button>
         </div>
 
         <!-- 1. Category Filter -->
-        <div class="mt-6">
-          <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Category</label>
-          <div class="relative">
-            <select id="filterCategory" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/10">
-              <option value="All">All Categories</option>
-            </select>
-          </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Category</label>
+          <select id="filterCategory" onchange="applyFilters()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 focus:outline-none">
+            <option value="All">All Categories</option>
+          </select>
         </div>
 
-        <!-- 2. Experience Level Filter (Dynamic Counts) -->
-        <div class="mt-6">
-          <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-2.5">Experience Level</label>
-          <div class="space-y-2 text-xs text-slate-600">
-            <label class="flex items-center justify-between cursor-pointer group">
+        <!-- 2. Experience Level Filter -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Experience Level</label>
+          <div class="space-y-1.5 text-xs text-slate-600">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="expLevel" value="Any" checked onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">Any</span>
+                <input type="radio" name="expLevel" value="Any" checked onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900">
+                <span>Any</span>
               </span>
               <span id="count-exp-any" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="expLevel" value="Entry Level" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">Entry Level</span>
+                <input type="radio" name="expLevel" value="Entry Level" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900">
+                <span>Entry Level</span>
               </span>
               <span id="count-exp-entry" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="expLevel" value="Intermediate" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">Intermediate</span>
+                <input type="radio" name="expLevel" value="Intermediate" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900">
+                <span>Intermediate</span>
               </span>
               <span id="count-exp-inter" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="expLevel" value="Expert" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">Expert</span>
+                <input type="radio" name="expLevel" value="Expert" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900">
+                <span>Expert</span>
               </span>
               <span id="count-exp-expert" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
           </div>
         </div>
 
-        <!-- 3. Project Type Filter (Hourly / Fixed Price Toggle) -->
-        <div class="mt-6">
-          <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-2.5">Project Type</label>
-          <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-xl gap-1 border border-slate-200/60">
-            <button id="btnTypeHourly" onclick="toggleProjectType('Hourly')" class="py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all">Hourly</button>
-            <button id="btnTypeFixed" onclick="toggleProjectType('Fixed Price')" class="py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all">Fixed Price</button>
+        <!-- 3. Project Type Filter -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Project Type</label>
+          <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-lg gap-1 border border-slate-200">
+            <button id="btnTypeHourly" onclick="toggleProjectType('Hourly')" class="py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all">Hourly</button>
+            <button id="btnTypeFixed" onclick="toggleProjectType('Fixed Price')" class="py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all">Fixed</button>
           </div>
         </div>
 
-        <!-- 4. Budget Range Filter (Dynamic Counts) -->
-        <div class="mt-6">
-          <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-2.5">Budget</label>
-          <div class="space-y-2 text-xs text-slate-600">
-            <label class="flex items-center justify-between cursor-pointer group">
+        <!-- 4. Budget Range Filter -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Budget</label>
+          <div class="space-y-1.5 text-xs text-slate-600">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="budgetRange" value="any" checked onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">Any</span>
+                <input type="radio" name="budgetRange" value="any" checked onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>Any</span>
               </span>
               <span id="count-bud-any" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="budgetRange" value="lt100" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">Less than $100</span>
+                <input type="radio" name="budgetRange" value="lt100" onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>&lt; $100</span>
               </span>
               <span id="count-bud-lt100" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="budgetRange" value="100to500" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">$100 to $500</span>
+                <input type="radio" name="budgetRange" value="100to500" onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>$100 to $500</span>
               </span>
               <span id="count-bud-100to500" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="budgetRange" value="500to1k" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">$500 to $1k</span>
+                <input type="radio" name="budgetRange" value="500to1k" onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>$500 to $1k</span>
               </span>
               <span id="count-bud-500to1k" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="budgetRange" value="1kto5k" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">$1k to $5k</span>
+                <input type="radio" name="budgetRange" value="1kto5k" onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>$1k to $5k</span>
               </span>
               <span id="count-bud-1kto5k" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="budgetRange" value="gt5k" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">$5k+</span>
+                <input type="radio" name="budgetRange" value="gt5k" onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>$5k+</span>
               </span>
               <span id="count-bud-gt5k" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
           </div>
         </div>
 
-        <!-- 5. Number of Proposals Filter (Dynamic Counts) -->
-        <div class="mt-6">
-          <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-2.5">Number of Proposals</label>
-          <div class="space-y-2 text-xs text-slate-600">
-            <label class="flex items-center justify-between cursor-pointer group">
+        <!-- 5. Number of Proposals Filter -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Proposals</label>
+          <div class="space-y-1.5 text-xs text-slate-600">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="propRange" value="any" checked onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">Any</span>
+                <input type="radio" name="propRange" value="any" checked onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>Any</span>
               </span>
               <span id="count-prop-any" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="propRange" value="lt5" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">Less than 5</span>
+                <input type="radio" name="propRange" value="lt5" onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>&lt; 5</span>
               </span>
               <span id="count-prop-lt5" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="propRange" value="5to10" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">5 to 10</span>
+                <input type="radio" name="propRange" value="5to10" onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>5 to 10</span>
               </span>
               <span id="count-prop-5to10" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="propRange" value="10to15" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">10 to 15</span>
+                <input type="radio" name="propRange" value="10to15" onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>10 to 15</span>
               </span>
               <span id="count-prop-10to15" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
-            <label class="flex items-center justify-between cursor-pointer group">
+            <label class="flex items-center justify-between cursor-pointer group hover:text-slate-900">
               <span class="flex items-center gap-2">
-                <input type="radio" name="propRange" value="15to20" onchange="applyFilters()" class="w-3.5 h-3.5 text-slate-900 focus:ring-0">
-                <span class="group-hover:text-slate-900">15 to 20</span>
+                <input type="radio" name="propRange" value="15to20" onchange="applyFilters()" class="w-3.5 h-3.5">
+                <span>15 to 20</span>
               </span>
               <span id="count-prop-15to20" class="text-slate-400 font-mono text-[11px]">-</span>
             </label>
@@ -392,20 +383,20 @@
       </aside>
 
       <!-- ========================================================================= -->
-      <!-- RIGHT PROJECT RESULTS FEED & CARDS                                        -->
+      <!-- RIGHT PROJECT RESULTS FEED                                                -->
       <!-- ========================================================================= -->
-      <section class="flex-1 p-8 overflow-y-auto">
+      <section class="flex-1 p-6 overflow-y-auto">
         
         <!-- Results Header & Sorter -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-2">
-            <h2 class="text-lg font-bold text-slate-900">Showing Results</h2>
-            <span id="resultsCount" class="text-sm font-semibold text-slate-500">(0)</span>
+            <h2 class="text-sm font-bold text-slate-900">Showing Results</h2>
+            <span id="resultsCount" class="text-xs font-semibold text-slate-500">(0)</span>
           </div>
 
-          <div class="flex items-center gap-3">
-            <span class="text-xs text-slate-500 font-medium">Sort by:</span>
-            <select id="sortBy" onchange="applyFilters()" class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/10 shadow-xs cursor-pointer">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500">Sort:</span>
+            <select id="sortBy" onchange="applyFilters()" class="bg-white border border-slate-200 rounded-md px-2.5 py-1 text-xs font-medium text-slate-800 focus:outline-none cursor-pointer">
               <option value="newest">Newest</option>
               <option value="highest_budget">Highest Budget</option>
               <option value="lowest_proposals">Lowest Proposals</option>
@@ -414,55 +405,46 @@
         </div>
 
         <!-- Projects Grid Container -->
-        <div id="projectsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5 pb-12">
+        <div id="projectsContainer" class="grid grid-cols-1 xl:grid-cols-2 gap-4 pb-12">
           <!-- Dynamically populated via app.js -->
         </div>
 
-        <!-- Proposal Status Tracker View (Hidden by default, shown via Tab) -->
+        <!-- Proposals View Container -->
         <div id="proposalsViewContainer" class="hidden space-y-4 pb-12">
-          <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
-            <h3 class="text-base font-bold text-slate-900 mb-1">Your Submitted Applications</h3>
-            <p class="text-xs text-slate-500 mb-6">Track application progress, statuses, and client responses in real time.</p>
-            <div id="myProposalsList" class="divide-y divide-slate-100">
-              <!-- Dynamically populated -->
-            </div>
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs">
+            <h3 class="text-sm font-bold text-slate-900 mb-1">Your Submitted Applications</h3>
+            <p class="text-xs text-slate-500 mb-4">Track application progress, statuses, and client responses in real time.</p>
+            <div id="myProposalsList" class="divide-y divide-slate-100"></div>
           </div>
         </div>
 
-        <!-- Freelancers / Students View (For "Find Freelancers") -->
+        <!-- Freelancers View Container -->
         <div id="freelancersViewContainer" class="hidden space-y-4 pb-12">
-          <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs mb-6">
-            <h3 class="text-base font-bold text-slate-900">Talented University Freelancers</h3>
-            <p class="text-xs text-slate-500 mt-1">Connect directly with vetted student developers, designers, and writers.</p>
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs mb-4">
+            <h3 class="text-sm font-bold text-slate-900">University Freelancers</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Connect with student developers, designers, and writers.</p>
           </div>
-          <div id="freelancersList" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <!-- Dynamically populated -->
-          </div>
+          <div id="freelancersList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <!-- Admin View (For Admin Persona) -->
-        <div id="adminViewContainer" class="hidden space-y-6 pb-12">
-          <!-- Stats Summary -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="adminStatsGrid">
-            <!-- Populated via JS -->
-          </div>
+        <!-- Admin View Container -->
+        <div id="adminViewContainer" class="hidden space-y-4 pb-12">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="adminStatsGrid"></div>
 
-          <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
-            <h3 class="text-base font-bold text-slate-900 mb-4">Platform User Management</h3>
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs">
+            <h3 class="text-sm font-bold text-slate-900 mb-3">Platform User Management</h3>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
                 <thead>
-                  <tr class="border-b border-slate-200 text-slate-500">
-                    <th class="py-2.5 px-3">Name</th>
-                    <th class="py-2.5 px-3">Email</th>
-                    <th class="py-2.5 px-3">Role</th>
-                    <th class="py-2.5 px-3">Country</th>
-                    <th class="py-2.5 px-3">Actions</th>
+                  <tr class="border-b border-slate-200 text-slate-500 font-semibold">
+                    <th class="py-2 px-3">Name</th>
+                    <th class="py-2 px-3">Email</th>
+                    <th class="py-2 px-3">Role</th>
+                    <th class="py-2 px-3">Country</th>
+                    <th class="py-2 px-3">Actions</th>
                   </tr>
                 </thead>
-                <tbody id="adminUserTable" class="divide-y divide-slate-100">
-                  <!-- Populated via JS -->
-                </tbody>
+                <tbody id="adminUserTable" class="divide-y divide-slate-100"></tbody>
               </table>
             </div>
           </div>
@@ -476,142 +458,140 @@
   <!-- MODALS                                                                    -->
   <!-- ========================================================================= -->
 
-  <!-- 0. Dynamic Sign In / Register Modal (Fully Functional Authentication) -->
-  <div id="modalAuth" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-md w-full p-7 shadow-2xl border border-slate-100 relative">
-      <button onclick="closeModal('modalAuth')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
+  <!-- Auth Modal -->
+  <div id="modalAuth" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative">
+      <button onclick="closeModal('modalAuth')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
-      <!-- Tab Toggles: Sign In / Create Account -->
-      <div class="flex border-b border-slate-100 pb-3 mb-5 gap-6">
-        <button id="authTabLogin" onclick="setAuthTab('login')" class="text-sm font-bold text-slate-900 border-b-2 border-slate-900 pb-2">Sign In</button>
-        <button id="authTabRegister" onclick="setAuthTab('register')" class="text-sm font-bold text-slate-400 hover:text-slate-700 pb-2">Create Account</button>
+      <div class="flex border-b border-slate-100 pb-2.5 mb-4 gap-5">
+        <button id="authTabLogin" onclick="setAuthTab('login')" class="text-xs font-bold text-slate-900 border-b-2 border-slate-900 pb-2">Sign In</button>
+        <button id="authTabRegister" onclick="setAuthTab('register')" class="text-xs font-bold text-slate-400 hover:text-slate-700 pb-2">Create Account</button>
       </div>
 
       <!-- Login Form -->
-      <form id="formLogin" onsubmit="handleLoginForm(event)" class="space-y-4">
+      <form id="formLogin" onsubmit="handleLoginForm(event)" class="space-y-3.5">
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
-          <input type="email" id="loginEmail" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900" placeholder="your.name@gmail.com" />
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+          <input type="email" id="loginEmail" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900" placeholder="your.name@gmail.com" />
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-          <input type="password" id="loginPassword" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900" placeholder="••••••••" />
+          <input type="password" id="loginPassword" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900" placeholder="••••••••" />
         </div>
-        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl text-xs font-semibold transition-all">Sign In</button>
+        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg text-xs font-semibold transition-colors">Sign In</button>
       </form>
 
       <!-- Register Form -->
-      <form id="formRegister" onsubmit="handleRegisterForm(event)" class="space-y-3.5 hidden">
+      <form id="formRegister" onsubmit="handleRegisterForm(event)" class="space-y-3 hidden">
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Select Account Type</label>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Account Type</label>
           <div class="grid grid-cols-2 gap-2">
-            <label class="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold cursor-pointer">
+            <label class="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold cursor-pointer">
               <input type="radio" name="regRole" value="student" checked onchange="toggleRegStudentFields(true)" />
-              <span>🎓 Student</span>
+              <span>Student</span>
             </label>
-            <label class="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold cursor-pointer">
+            <label class="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold cursor-pointer">
               <input type="radio" name="regRole" value="client" onchange="toggleRegStudentFields(false)" />
-              <span>💼 Client</span>
+              <span>Client</span>
             </label>
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
-          <input type="text" id="regName" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs" placeholder="e.g. John Doe" />
+          <input type="text" id="regName" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs" placeholder="e.g. John Doe" />
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
-          <input type="email" id="regEmail" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs" placeholder="john@university.edu" />
+          <input type="email" id="regEmail" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs" placeholder="john@university.edu" />
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-          <input type="password" id="regPassword" required minlength="6" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs" placeholder="At least 6 characters" />
+          <input type="password" id="regPassword" required minlength="6" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs" placeholder="At least 6 characters" />
         </div>
 
         <div id="regStudentFields" class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">University</label>
-            <input type="text" id="regUniv" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" placeholder="e.g. Harvard University" />
+            <input type="text" id="regUniv" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs" placeholder="e.g. MIT" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Major</label>
-            <input type="text" id="regMajor" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" placeholder="e.g. Computer Science" />
+            <input type="text" id="regMajor" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs" placeholder="e.g. Computer Science" />
           </div>
         </div>
 
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-xs font-semibold transition-all shadow-sm">Complete Free Registration</button>
+        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-lg text-xs font-semibold transition-colors">Create Free Account</button>
       </form>
     </div>
   </div>
 
-  <!-- 1. Apply For Project Modal (Required Feature - 8 Marks) -->
-  <div id="modalApply" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-7 shadow-2xl border border-slate-100 relative">
-      <button onclick="closeModal('modalApply')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
+  <!-- Apply Modal -->
+  <div id="modalApply" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 relative">
+      <button onclick="closeModal('modalApply')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
-      <div class="mb-5">
-        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">Proposal Submission</span>
-        <h3 id="applyModalTitle" class="text-lg font-bold text-slate-900 mt-2">Apply for Project</h3>
+      <div class="mb-4">
+        <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">Proposal Submission</span>
+        <h3 id="applyModalTitle" class="text-base font-bold text-slate-900 mt-1.5 leading-snug">Apply for Project</h3>
         <p id="applyModalClient" class="text-xs text-slate-500 mt-0.5"></p>
       </div>
 
-      <form id="formApply" onsubmit="submitApplication(event)" class="space-y-4">
+      <form id="formApply" onsubmit="submitApplication(event)" class="space-y-3.5">
         <input type="hidden" id="applyProjectId" />
         
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Bid Amount ($)</label>
-            <input type="number" id="applyBidAmount" step="0.5" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 font-mono" placeholder="25.00" />
+            <input type="number" id="applyBidAmount" step="0.5" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono" placeholder="25.00" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Estimated Delivery (Days)</label>
-            <input type="number" id="applyEstimatedDays" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10" placeholder="5" />
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Delivery Time (Days)</label>
+            <input type="number" id="applyEstimatedDays" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs" placeholder="5" />
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Cover Letter & Approach</label>
-          <textarea id="applyCoverLetter" rows="4" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10" placeholder="Highlight your relevant experience, university projects, and how you will solve the client's problem..."></textarea>
+          <textarea id="applyCoverLetter" rows="4" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-900" placeholder="Detail your relevant university experience and technical approach..."></textarea>
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-3">
-          <button type="button" onclick="closeModal('modalApply')" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
-          <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition-all">Submit Application</button>
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeModal('modalApply')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+          <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-1.5 rounded-lg text-xs font-semibold transition-colors">Submit Proposal</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- 2. Publish Project / Job Request Modal (Required Feature - 8 Marks) -->
-  <div id="modalPostProject" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-xl w-full p-7 shadow-2xl border border-slate-100 relative">
-      <button onclick="closeModal('modalPostProject')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
+  <!-- Post Project Modal -->
+  <div id="modalPostProject" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 relative">
+      <button onclick="closeModal('modalPostProject')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
-      <div class="mb-5">
-        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700">Client Portal</span>
-        <h3 class="text-lg font-bold text-slate-900 mt-2">Publish a Project / Job Request</h3>
-        <p class="text-xs text-slate-500 mt-0.5">Post an opportunity for skilled university students.</p>
+      <div class="mb-4">
+        <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Client Portal</span>
+        <h3 class="text-base font-bold text-slate-900 mt-1.5">Publish a Project / Job Request</h3>
       </div>
 
-      <form id="formPostProject" onsubmit="submitNewProject(event)" class="space-y-4">
+      <form id="formPostProject" onsubmit="submitNewProject(event)" class="space-y-3">
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Project Title</label>
-          <input type="text" id="postTitle" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10" placeholder="e.g. Build/Edit Landing Page for Online Course" />
+          <input type="text" id="postTitle" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs" placeholder="e.g. Build Landing Page for Course" />
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Category</label>
-            <select id="postCategory" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none">
+            <select id="postCategory" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800">
               <option value="Web Design">Web Design</option>
               <option value="Web Development">Web Development</option>
               <option value="UI/UX Design">UI/UX Design</option>
@@ -621,21 +601,21 @@
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Project Type</label>
-            <select id="postProjectType" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none">
+            <select id="postProjectType" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800">
               <option value="Hourly">Hourly</option>
               <option value="Fixed Price">Fixed Price</option>
             </select>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Budget ($ / hour or total)</label>
-            <input type="number" id="postBudget" step="0.5" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 font-mono" placeholder="25.00" />
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Budget ($)</label>
+            <input type="number" id="postBudget" step="0.5" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-mono" placeholder="25.00" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Experience Level Required</label>
-            <select id="postExpLevel" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Experience Level</label>
+            <select id="postExpLevel" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800">
               <option value="Entry Level">Entry Level</option>
               <option value="Intermediate">Intermediate</option>
               <option value="Expert">Expert</option>
@@ -645,78 +625,73 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Required Skills (Comma separated)</label>
-          <input type="text" id="postSkills" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10" placeholder="Web Design, WordPress, Figma, UI/UX" />
+          <input type="text" id="postSkills" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs" placeholder="Web Design, WordPress, Figma" />
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Project Description & Scope</label>
-          <textarea id="postDescription" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10" placeholder="Provide full details of what needs to be accomplished..."></textarea>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Project Description</label>
+          <textarea id="postDescription" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs" placeholder="Provide full scope details..."></textarea>
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-3">
-          <button type="button" onclick="closeModal('modalPostProject')" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
-          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition-all">Publish Project</button>
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeModal('modalPostProject')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-1.5 rounded-lg text-xs font-semibold transition-colors">Publish Project</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- 3. Smart Matching Modal (Bonus Challenge - 5 Marks) -->
-  <div id="modalMatching" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-7 shadow-2xl border border-slate-100 relative max-h-[85vh] flex flex-col">
-      <button onclick="closeModal('modalMatching')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
+  <!-- Smart Matching Modal (Bonus 5 Marks) -->
+  <div id="modalMatching" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-200 relative max-h-[85vh] flex flex-col">
+      <button onclick="closeModal('modalMatching')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
-      <div class="mb-4">
+      <div class="mb-3">
         <div class="flex items-center gap-2">
-          <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 uppercase">Bonus Challenge (5 Marks)</span>
-          <span class="text-xs text-slate-500 font-medium">Smart AI Skill Matching Mechanism</span>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 uppercase">Bonus Challenge (5 Marks)</span>
         </div>
-        <h3 id="matchModalProjectTitle" class="text-lg font-bold text-slate-900 mt-1">Recommended Students For Project</h3>
-        <p class="text-xs text-slate-500">Automatically ranks students based on required skills coverage, proficiency, and review ratings.</p>
+        <h3 id="matchModalProjectTitle" class="text-base font-bold text-slate-900 mt-1 leading-snug">Recommended Students For Project</h3>
+        <p class="text-xs text-slate-500">Ranked by skills coverage, proficiency weights, and student reviews.</p>
       </div>
 
-      <div id="matchingCandidatesList" class="flex-1 overflow-y-auto space-y-3 pr-1">
-        <!-- Dynamically loaded candidates with match scores -->
-      </div>
+      <div id="matchingCandidatesList" class="flex-1 overflow-y-auto space-y-2.5 pr-1"></div>
     </div>
   </div>
 
-  <!-- 4. Student Skill Profile & Portfolio Modal (Required 8 Marks + Advanced 5 Marks) -->
-  <div id="modalProfile" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-7 shadow-2xl border border-slate-100 relative max-h-[90vh] flex flex-col">
-      <button onclick="closeModal('modalProfile')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
+  <!-- Student Profile & Portfolio Modal -->
+  <div id="modalProfile" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-200 relative max-h-[88vh] flex flex-col">
+      <button onclick="closeModal('modalProfile')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
-      <div class="mb-4">
-        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700">Student Profile & Portfolio</span>
-        <h3 class="text-lg font-bold text-slate-900 mt-2">Manage Skill Profile & Portfolios</h3>
+      <div class="mb-3">
+        <h3 class="text-base font-bold text-slate-900">Manage Skill Profile & Portfolios</h3>
       </div>
 
-      <div class="flex-1 overflow-y-auto pr-1 space-y-6">
-        <!-- Profile Form -->
-        <form id="formProfile" onsubmit="saveProfileChanges(event)" class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
+      <div class="flex-1 overflow-y-auto pr-1 space-y-5">
+        <form id="formProfile" onsubmit="saveProfileChanges(event)" class="space-y-3">
+          <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">University</label>
-              <input type="text" id="profUniversity" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900" />
+              <input type="text" id="profUniversity" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900" />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Major / Degree</label>
-              <input type="text" id="profMajor" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900" />
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Major</label>
+              <input type="text" id="profMajor" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900" />
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-3 gap-2.5">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Hourly Rate ($)</label>
-              <input type="number" id="profRate" step="0.5" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900" />
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Rate ($/hr)</label>
+              <input type="number" id="profRate" step="0.5" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-mono" />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Experience Level</label>
-              <select id="profExpLevel" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Experience</label>
+              <select id="profExpLevel" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-800">
                 <option value="Entry Level">Entry Level</option>
                 <option value="Intermediate">Intermediate</option>
                 <option value="Expert">Expert</option>
@@ -724,7 +699,7 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Availability</label>
-              <select id="profAvailability" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800">
+              <select id="profAvailability" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-800">
                 <option value="Available">Available</option>
                 <option value="Busy">Busy</option>
               </select>
@@ -733,129 +708,119 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Bio</label>
-            <textarea id="profBio" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900"></textarea>
+            <textarea id="profBio" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-900"></textarea>
           </div>
 
           <div class="flex justify-end">
-            <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-xl text-xs font-semibold">Save Profile Info</button>
+            <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-1.5 rounded-lg text-xs font-semibold">Save Profile</button>
           </div>
         </form>
 
-        <!-- Dynamic Skills Section -->
-        <div class="border-t border-slate-100 pt-5">
-          <h4 class="text-sm font-bold text-slate-900 mb-2">Student Skills (Dynamic Management)</h4>
-          <div class="flex gap-2 mb-3">
-            <input type="text" id="newSkillName" placeholder="e.g. Next.js, Flutter, Docker" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900" />
-            <select id="newSkillProf" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800">
+        <!-- Dynamic Skills -->
+        <div class="border-t border-slate-100 pt-4">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-2">Student Skills</h4>
+          <div class="flex gap-2 mb-2.5">
+            <input type="text" id="newSkillName" placeholder="e.g. TypeScript, React, Figma" class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs" />
+            <select id="newSkillProf" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-800">
               <option value="Beginner">Beginner</option>
               <option value="Intermediate" selected>Intermediate</option>
               <option value="Expert">Expert</option>
             </select>
-            <button onclick="handleAddNewSkill()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-xl text-xs font-semibold">Add Skill</button>
+            <button onclick="handleAddNewSkill()" class="bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold">Add</button>
           </div>
-          <div id="profileSkillsTags" class="flex flex-wrap gap-2">
-            <!-- Rendered skill chips -->
-          </div>
+          <div id="profileSkillsTags" class="flex flex-wrap gap-1.5"></div>
         </div>
 
-        <!-- Portfolio Showcase Management (Advanced Feature 5 Marks) -->
-        <div class="border-t border-slate-100 pt-5">
-          <div class="flex items-center justify-between mb-3">
+        <!-- Portfolios -->
+        <div class="border-t border-slate-100 pt-4">
+          <div class="flex items-center justify-between mb-2.5">
             <div>
-              <h4 class="text-sm font-bold text-slate-900">Portfolio Projects</h4>
-              <p class="text-[11px] text-slate-500">Showcase past work, live links, and case studies.</p>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900">Portfolio Showcases</h4>
             </div>
-            <button onclick="togglePortfolioForm()" class="text-xs font-semibold text-blue-600 hover:underline">+ Add Portfolio</button>
+            <button onclick="togglePortfolioForm()" class="text-xs font-semibold text-blue-600 hover:underline">+ Add Project</button>
           </div>
 
-          <!-- Add Portfolio Inline Form -->
-          <div id="addPortfolioForm" class="hidden bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4 space-y-3">
-            <input type="text" id="portTitle" placeholder="Portfolio Item Title" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs" />
-            <textarea id="portDesc" rows="2" placeholder="Description of problem, tech stack, and your role" class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs"></textarea>
+          <div id="addPortfolioForm" class="hidden bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3 space-y-2">
+            <input type="text" id="portTitle" placeholder="Project Title" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs" />
+            <textarea id="portDesc" rows="2" placeholder="Description of problem, tech stack, and results" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs"></textarea>
             <div class="grid grid-cols-2 gap-2">
-              <input type="text" id="portLink" placeholder="Live Demo / GitHub Link" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs" />
-              <input type="text" id="portTags" placeholder="Tags (e.g. React, Tailwind, API)" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+              <input type="text" id="portLink" placeholder="Live URL / GitHub" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs" />
+              <input type="text" id="portTags" placeholder="Tags (e.g. React, Next.js)" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs" />
             </div>
             <div class="flex justify-end gap-2">
-              <button onclick="togglePortfolioForm()" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500">Cancel</button>
-              <button onclick="submitNewPortfolio()" class="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-xs font-semibold">Save Project</button>
+              <button onclick="togglePortfolioForm()" class="px-2.5 py-1 rounded-md text-xs font-semibold text-slate-500">Cancel</button>
+              <button onclick="submitNewPortfolio()" class="bg-slate-900 text-white px-3.5 py-1 rounded-md text-xs font-semibold">Save Item</button>
             </div>
           </div>
 
-          <div id="profilePortfoliosList" class="space-y-3">
-            <!-- Rendered portfolios -->
-          </div>
+          <div id="profilePortfoliosList" class="space-y-2"></div>
         </div>
 
       </div>
     </div>
   </div>
 
-  <!-- 5. Client Review Proposals Modal (Advanced Feature: Status Updates - 5 Marks) -->
-  <div id="modalClientReview" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-7 shadow-2xl border border-slate-100 relative max-h-[85vh] flex flex-col">
-      <button onclick="closeModal('modalClientReview')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
+  <!-- Client Review Proposals Modal -->
+  <div id="modalClientReview" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-200 relative max-h-[85vh] flex flex-col">
+      <button onclick="closeModal('modalClientReview')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
-      <div class="mb-4">
-        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">Proposal Evaluation</span>
-        <h3 id="clientReviewProjectTitle" class="text-lg font-bold text-slate-900 mt-2">Manage Project Proposals</h3>
-        <p class="text-xs text-slate-500">Update applicant statuses (Shortlisted, Accepted, Rejected).</p>
+      <div class="mb-3">
+        <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">Proposal Evaluation</span>
+        <h3 id="clientReviewProjectTitle" class="text-base font-bold text-slate-900 mt-1">Manage Proposals</h3>
       </div>
 
-      <div id="clientProposalsList" class="flex-1 overflow-y-auto space-y-4 pr-1">
-        <!-- Rendered applicant proposal cards with status update controls -->
-      </div>
+      <div id="clientProposalsList" class="flex-1 overflow-y-auto space-y-3 pr-1"></div>
     </div>
   </div>
 
-  <!-- 6. Leave Rating & Review Modal (Advanced Feature - 5 Marks) -->
-  <div id="modalReview" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-md w-full p-7 shadow-2xl border border-slate-100 relative">
-      <button onclick="closeModal('modalReview')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
+  <!-- Review Modal -->
+  <div id="modalReview" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 relative">
+      <button onclick="closeModal('modalReview')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
-      <div class="mb-4">
-        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700">Rating & Review</span>
-        <h3 class="text-lg font-bold text-slate-900 mt-2">Rate Freelancer Performance</h3>
+      <div class="mb-3">
+        <h3 class="text-base font-bold text-slate-900">Rate Freelancer Performance</h3>
         <p id="reviewRecipientName" class="text-xs text-slate-500 mt-0.5"></p>
       </div>
 
-      <form id="formReview" onsubmit="submitReviewForm(event)" class="space-y-4">
+      <form id="formReview" onsubmit="submitReviewForm(event)" class="space-y-3">
         <input type="hidden" id="reviewProjectId" />
         <input type="hidden" id="reviewRevieweeId" />
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1.5">Rating (1 to 5 Stars)</label>
-          <div class="flex items-center gap-2" id="starRatingSelector">
-            <button type="button" onclick="setRating(1)" class="star-btn text-2xl text-slate-300">★</button>
-            <button type="button" onclick="setRating(2)" class="star-btn text-2xl text-slate-300">★</button>
-            <button type="button" onclick="setRating(3)" class="star-btn text-2xl text-slate-300">★</button>
-            <button type="button" onclick="setRating(4)" class="star-btn text-2xl text-slate-300">★</button>
-            <button type="button" onclick="setRating(5)" class="star-btn text-2xl text-amber-400">★</button>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Rating</label>
+          <div class="flex items-center gap-1.5" id="starRatingSelector">
+            <button type="button" onclick="setRating(1)" class="star-btn text-xl text-slate-300">★</button>
+            <button type="button" onclick="setRating(2)" class="star-btn text-xl text-slate-300">★</button>
+            <button type="button" onclick="setRating(3)" class="star-btn text-xl text-slate-300">★</button>
+            <button type="button" onclick="setRating(4)" class="star-btn text-xl text-slate-300">★</button>
+            <button type="button" onclick="setRating(5)" class="star-btn text-xl text-amber-400">★</button>
           </div>
           <input type="hidden" id="ratingValue" value="5" />
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Feedback & Review Comment</label>
-          <textarea id="reviewComment" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900" placeholder="Describe the quality of delivery, communication, and technical depth..."></textarea>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Feedback Comment</label>
+          <textarea id="reviewComment" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs" placeholder="Detail the delivery quality, responsiveness, and technical skill..."></textarea>
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-2">
-          <button type="button" onclick="closeModal('modalReview')" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
-          <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl text-xs font-semibold shadow-sm">Submit Review</button>
+        <div class="flex items-center justify-end gap-2 pt-1">
+          <button type="button" onclick="closeModal('modalReview')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+          <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-1.5 rounded-lg text-xs font-semibold">Submit Review</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Notification Toast Container -->
-  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
-  <!-- Load Dynamic Store, Universal API, and Reactive App Controller -->
+  <!-- Scripts -->
   <script src="/js/store.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/app.js"></script>

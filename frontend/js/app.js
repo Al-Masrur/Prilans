@@ -1,5 +1,5 @@
 // Prilans Application State & Controller
-// 100% Dynamic, Zero Hardcoded Values, Free & Vercel-Ready
+// Modern, Clean, Minimalist UI - Zero AI Artifacts, Gradients, or Alignment Errors
 
 let currentUser = null;
 let currentProjects = [];
@@ -15,50 +15,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadProjects();
 });
 
-async function loadDynamicCategories() {
-    try {
-        const categories = await api.getCategories();
-        const select = document.getElementById("filterCategory");
-        if (!select) return;
-        const currentVal = select.value;
-        select.innerHTML = '<option value="All">All Categories</option>';
-        categories.forEach(cat => {
-            const opt = document.createElement("option");
-            opt.value = cat;
-            opt.textContent = cat;
-            if (cat === currentVal) opt.selected = true;
-            select.appendChild(opt);
-        });
-    } catch (e) {
-        console.error("Failed to load categories", e);
-    }
-}
-
-// Toast notification helper
+// Toast notification helper (Minimalist, Solid)
 function showToast(message, type = "success") {
     const container = document.getElementById("toastContainer");
     if (!container) return;
     const toast = document.createElement("div");
-    const bg = type === "success" ? "bg-slate-900 text-white" : type === "info" ? "bg-blue-600 text-white" : "bg-red-600 text-white";
-    toast.className = `${bg} px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto`;
+    const bg = type === "success" ? "bg-slate-900 text-white" : type === "info" ? "bg-slate-800 text-white" : "bg-rose-700 text-white";
+    toast.className = `${bg} px-3.5 py-2.5 rounded-lg shadow-lg text-xs font-medium flex items-center gap-2 transform transition-all duration-200 translate-y-1 opacity-0 pointer-events-auto border border-slate-700`;
     toast.innerHTML = `
-        <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i>
+        <i data-lucide="${type === 'success' ? 'check' : 'alert-circle'}" class="w-3.5 h-3.5"></i>
         <span>${message}</span>
     `;
     container.appendChild(toast);
     lucide.createIcons();
     
     setTimeout(() => {
-        toast.classList.remove("translate-y-2", "opacity-0");
+        toast.classList.remove("translate-y-1", "opacity-0");
     }, 10);
     
     setTimeout(() => {
-        toast.classList.add("translate-y-2", "opacity-0");
-        setTimeout(() => toast.remove(), 300);
-    }, 3500);
+        toast.classList.add("translate-y-1", "opacity-0");
+        setTimeout(() => toast.remove(), 250);
+    }, 3000);
 }
 
-// Dynamic relative time formatter (e.g. "15m ago", "2h ago", "Just now")
+// Dynamic relative time formatter
 function formatTimeAgo(isoString) {
     if (!isoString) return "Just now";
     const date = new Date(isoString);
@@ -94,7 +75,7 @@ function updateUserUI() {
     const badge = document.getElementById("myProposalsBadge");
     
     if (!currentUser) {
-        if (btnAuth) btnAuth.textContent = "Sign In / Register";
+        if (btnAuth) btnAuth.textContent = "Sign In";
         const nameEl = document.getElementById("sidebarUserName");
         const emailEl = document.getElementById("sidebarUserEmail");
         const avatarEl = document.getElementById("sidebarUserAvatar");
@@ -149,7 +130,6 @@ function handleProfileBadgeClick() {
 
 function openAuthModal() {
     if (currentUser) {
-        // Sign out
         api.removeToken();
         currentUser = null;
         updateUserUI();
@@ -167,13 +147,13 @@ function setAuthTab(tab) {
     const formReg = document.getElementById("formRegister");
 
     if (tab === "login") {
-        tabLogin.className = "text-sm font-bold text-slate-900 border-b-2 border-slate-900 pb-2";
-        tabReg.className = "text-sm font-bold text-slate-400 hover:text-slate-700 pb-2";
+        tabLogin.className = "text-xs font-bold text-slate-900 border-b-2 border-slate-900 pb-2";
+        tabReg.className = "text-xs font-bold text-slate-400 hover:text-slate-700 pb-2";
         formLogin.classList.remove("hidden");
         formReg.classList.add("hidden");
     } else {
-        tabReg.className = "text-sm font-bold text-slate-900 border-b-2 border-slate-900 pb-2";
-        tabLogin.className = "text-sm font-bold text-slate-400 hover:text-slate-700 pb-2";
+        tabReg.className = "text-xs font-bold text-slate-900 border-b-2 border-slate-900 pb-2";
+        tabLogin.className = "text-xs font-bold text-slate-400 hover:text-slate-700 pb-2";
         formReg.classList.remove("hidden");
         formLogin.classList.add("hidden");
     }
@@ -261,8 +241,27 @@ function resetDemoData() {
 }
 
 // ---------------------------------------------------------------------------
-// DYNAMIC FILTER COUNT UPDATER (Calculated live - zero hardcoding)
+// DYNAMIC CATEGORIES & FILTER COUNTS
 // ---------------------------------------------------------------------------
+async function loadDynamicCategories() {
+    try {
+        const categories = await api.getCategories();
+        const select = document.getElementById("filterCategory");
+        if (!select) return;
+        const currentVal = select.value;
+        select.innerHTML = '<option value="All">All Categories</option>';
+        categories.forEach(cat => {
+            const opt = document.createElement("option");
+            opt.value = cat;
+            opt.textContent = cat;
+            if (cat === currentVal) opt.selected = true;
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error("Failed to load categories", e);
+    }
+}
+
 async function updateDynamicFilterCounts() {
     const counts = await api.computeFilterCounts();
 
@@ -300,9 +299,9 @@ function switchNav(nav) {
         const el = document.getElementById(`nav-${item}`);
         if (!el) return;
         if (item === nav) {
-            el.className = "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-900 bg-slate-100 transition-all";
+            el.className = "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 bg-slate-100 transition-colors";
         } else {
-            el.className = "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all";
+            el.className = "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors";
         }
     });
 
@@ -331,6 +330,17 @@ function switchNav(nav) {
 }
 
 function setTab(tab) {
+    const tabs = ["all", "recommended", "proposals"];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (!btn) return;
+        if (t === tab) {
+            btn.className = "px-3.5 py-1.5 rounded-md text-xs font-semibold bg-slate-900 text-white transition-colors";
+        } else {
+            btn.className = "px-3.5 py-1.5 rounded-md text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5";
+        }
+    });
+
     if (tab === "all") switchNav("projects");
     else if (tab === "recommended") switchNav("recommendations");
     else if (tab === "proposals") switchNav("proposals");
@@ -398,8 +408,8 @@ function resetFilters() {
     document.querySelector('input[name="propRange"][value="any"]').checked = true;
     
     activeFilterProjectType = "";
-    document.getElementById("btnTypeHourly").className = "py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all";
-    document.getElementById("btnTypeFixed").className = "py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all";
+    document.getElementById("btnTypeHourly").className = "py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all";
+    document.getElementById("btnTypeFixed").className = "py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all";
     
     loadProjects();
     showToast("Filters reset to default");
@@ -408,33 +418,33 @@ function resetFilters() {
 function toggleProjectType(type) {
     if (activeFilterProjectType === type) {
         activeFilterProjectType = "";
-        document.getElementById("btnTypeHourly").className = "py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all";
-        document.getElementById("btnTypeFixed").className = "py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all";
+        document.getElementById("btnTypeHourly").className = "py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all";
+        document.getElementById("btnTypeFixed").className = "py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all";
     } else {
         activeFilterProjectType = type;
         if (type === "Hourly") {
-            document.getElementById("btnTypeHourly").className = "py-1.5 text-xs font-semibold rounded-lg bg-white text-slate-900 shadow-xs";
-            document.getElementById("btnTypeFixed").className = "py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all";
+            document.getElementById("btnTypeHourly").className = "py-1 text-xs font-semibold rounded bg-white text-slate-900 shadow-2xs";
+            document.getElementById("btnTypeFixed").className = "py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all";
         } else {
-            document.getElementById("btnTypeFixed").className = "py-1.5 text-xs font-semibold rounded-lg bg-white text-slate-900 shadow-xs";
-            document.getElementById("btnTypeHourly").className = "py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all";
+            document.getElementById("btnTypeFixed").className = "py-1 text-xs font-semibold rounded bg-white text-slate-900 shadow-2xs";
+            document.getElementById("btnTypeHourly").className = "py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all";
         }
     }
     applyFilters();
 }
 
 // ---------------------------------------------------------------------------
-// PROJECT CARD RENDERING (Dynamic timestamps, rates & proposals)
+// PROJECT CARD RENDERING (Minimalist, Optical Hierarchy)
 // ---------------------------------------------------------------------------
 function renderProjects(projects, isRecommended = false) {
     const container = document.getElementById("projectsContainer");
     if (!projects || projects.length === 0) {
         container.innerHTML = `
-            <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-slate-200/80">
-                <i data-lucide="inbox" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
-                <h4 class="text-sm font-bold text-slate-800">No projects found</h4>
-                <p class="text-xs text-slate-500 mt-1">Try adjusting your filters or search keywords.</p>
-                <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold">Reset Filters</button>
+            <div class="col-span-full py-12 text-center bg-white rounded-xl border border-slate-200">
+                <i data-lucide="inbox" class="w-8 h-8 text-slate-300 mx-auto mb-2"></i>
+                <h4 class="text-xs font-bold text-slate-800">No projects found</h4>
+                <p class="text-[11px] text-slate-500 mt-0.5">Try adjusting your filters or search keywords.</p>
+                <button onclick="resetFilters()" class="mt-3 px-3 py-1.5 bg-slate-900 text-white rounded-md text-xs font-semibold">Reset Filters</button>
             </div>
         `;
         lucide.createIcons();
@@ -442,49 +452,47 @@ function renderProjects(projects, isRecommended = false) {
     }
 
     container.innerHTML = projects.map(p => {
-        const rateFormatted = p.project_type === "Hourly" ? `$${p.budget.toFixed(2)}/hour` : `$${p.budget.toFixed(2)}`;
+        const rateFormatted = p.project_type === "Hourly" ? `$${p.budget.toFixed(2)}/hr` : `$${p.budget.toFixed(2)}`;
         const proposalsCount = p.proposals_count || 0;
         const relativeTime = formatTimeAgo(p.created_at);
         const skillsTags = (p.skills || []).map(s => `
-            <span class="inline-block px-2.5 py-1 rounded-lg text-[11px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
-                ${s}
-            </span>
+            <span class="skill-tag">${s}</span>
         `).join("");
 
         const applyBtn = p.has_applied 
-            ? `<button disabled class="bg-emerald-50 text-emerald-700 text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> Applied</button>`
-            : `<button onclick="openApplyModal(${p.id}, '${escapeQuote(p.title)}', '${escapeQuote(p.client_name)}', ${p.budget})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-5 py-2 rounded-xl transition-all shadow-xs">Apply Now</button>`;
+            ? `<button disabled class="bg-emerald-50 text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1 border border-emerald-200"><i data-lucide="check" class="w-3.5 h-3.5"></i> Applied</button>`
+            : `<button onclick="openApplyModal(${p.id}, '${escapeQuote(p.title)}', '${escapeQuote(p.client_name)}', ${p.budget})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">Apply Now</button>`;
 
         const matchBadge = isRecommended && p.match_score ? `
-            <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+            <span class="match-pill">
                 <i data-lucide="sparkles" class="w-3 h-3"></i>
                 <span>${p.match_score}% Match</span>
-            </div>
+            </span>
         ` : '';
 
         return `
-            <div class="project-card bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between">
+            <div class="project-card bg-white rounded-xl border border-slate-200 p-4.5 flex flex-col justify-between">
                 <div>
                     <!-- Card Top Meta Bar -->
-                    <div class="flex items-center justify-between gap-2 mb-3">
+                    <div class="flex items-center justify-between gap-2 mb-2">
                         <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-600">
+                            <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700">
                                 ${p.experience_level}
                             </span>
                             ${matchBadge}
                         </div>
                         <div class="flex items-center gap-2 text-xs text-slate-400">
                             <span>${relativeTime}</span>
-                            <div class="relative group">
-                                <button onclick="toggleCardMenu(${p.id})" class="p-1 hover:text-slate-800 text-slate-400 rounded-md">
+                            <div class="relative">
+                                <button onclick="toggleCardMenu(${p.id}, event)" class="p-1 hover:text-slate-800 text-slate-400 rounded">
                                     <i data-lucide="more-horizontal" class="w-4 h-4"></i>
                                 </button>
-                                <div id="card-menu-${p.id}" class="hidden absolute right-0 top-6 w-48 bg-white border border-slate-200 rounded-xl shadow-lg p-1.5 z-20">
-                                    <button onclick="openBonusMatchModal(${p.id}, '${escapeQuote(p.title)}')" class="w-full text-left px-2.5 py-1.5 text-xs text-amber-700 hover:bg-amber-50 rounded-lg flex items-center gap-2">
-                                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Match Students (Bonus)
+                                <div id="card-menu-${p.id}" class="hidden absolute right-0 top-6 w-44 bg-white border border-slate-200 rounded-lg shadow-lg p-1 z-20">
+                                    <button onclick="openBonusMatchModal(${p.id}, '${escapeQuote(p.title)}')" class="w-full text-left px-2.5 py-1.5 text-xs text-slate-700 hover:bg-slate-50 rounded flex items-center gap-2">
+                                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-slate-500"></i> Match Students (Bonus)
                                     </button>
-                                    <button onclick="openClientProposalsModal(${p.id}, '${escapeQuote(p.title)}')" class="w-full text-left px-2.5 py-1.5 text-xs text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2">
-                                        <i data-lucide="users" class="w-3.5 h-3.5"></i> Review Proposals
+                                    <button onclick="openClientProposalsModal(${p.id}, '${escapeQuote(p.title)}')" class="w-full text-left px-2.5 py-1.5 text-xs text-slate-700 hover:bg-slate-50 rounded flex items-center gap-2">
+                                        <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i> Review Proposals
                                     </button>
                                 </div>
                             </div>
@@ -496,33 +504,33 @@ function renderProjects(projects, isRecommended = false) {
                         ${p.title}
                     </h3>
 
-                    <!-- Client Info Row (Verified Badge + Country) -->
-                    <div class="flex items-center gap-3 mt-1.5 text-xs text-slate-500">
-                        <span class="flex items-center gap-1 text-emerald-600 font-semibold">
-                            <i data-lucide="check-circle" class="w-3.5 h-3.5 fill-emerald-100"></i> Verified
+                    <!-- Client Info Row -->
+                    <div class="flex items-center gap-2 mt-1.5 text-xs text-slate-500 flex-wrap">
+                        <span class="flex items-center gap-1 text-emerald-600 font-semibold text-[11px]">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Verified
                         </span>
                         <span>•</span>
-                        <span class="flex items-center gap-1">
-                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+                        <span class="flex items-center gap-1 text-[11px]">
+                            <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i>
                             ${p.client_country || 'United States'}
                         </span>
                         <span>•</span>
-                        <span class="text-slate-400 text-[11px]">${p.client_rating_display || 'Verified Client'}</span>
+                        <span class="text-slate-500 text-[11px] font-medium">${p.client_rating_display || 'Verified Client'}</span>
                     </div>
 
                     <!-- Description Snippet -->
-                    <p class="text-xs text-slate-600 leading-relaxed mt-2.5 line-clamp-2">
+                    <p class="text-xs text-slate-600 leading-relaxed mt-2 line-clamp-2">
                         ${p.description}
                     </p>
 
                     <!-- Skill Tags -->
-                    <div class="flex flex-wrap gap-1.5 mt-3.5">
+                    <div class="flex flex-wrap gap-1.5 mt-3">
                         ${skillsTags}
                     </div>
                 </div>
 
                 <!-- Footer: Rate, Proposals Count, Action Button -->
-                <div class="flex items-center justify-between pt-4 mt-4 border-t border-slate-100">
+                <div class="flex items-center justify-between pt-3.5 mt-3.5 border-t border-slate-100">
                     <div class="flex items-center gap-3">
                         <span class="text-sm font-bold text-slate-900 font-mono">${rateFormatted}</span>
                         <span class="text-xs text-slate-400 flex items-center gap-1">
@@ -544,7 +552,12 @@ function escapeQuote(str) {
     return (str || '').replace(/'/g, "\\'");
 }
 
-function toggleCardMenu(id) {
+function toggleCardMenu(id, e) {
+    if (e) e.stopPropagation();
+    // Close other menus first
+    document.querySelectorAll("[id^='card-menu-']").forEach(el => {
+        if (el.id !== `card-menu-${id}`) el.classList.add("hidden");
+    });
     const el = document.getElementById(`card-menu-${id}`);
     if (el) el.classList.toggle("hidden");
 }
@@ -575,7 +588,7 @@ async function openBonusMatchModal(projectId, projectTitle) {
     document.getElementById("matchModalProjectTitle").textContent = projectTitle;
     document.getElementById("modalMatching").classList.remove("hidden");
     const container = document.getElementById("matchingCandidatesList");
-    container.innerHTML = `<div class="py-8 text-center text-xs text-slate-400">Computing AI skill similarity vectors...</div>`;
+    container.innerHTML = `<div class="py-6 text-center text-xs text-slate-400">Computing student skill similarity ranking...</div>`;
 
     try {
         const res = await api.matchStudentsForProject(projectId);
@@ -588,42 +601,42 @@ async function openBonusMatchModal(projectId, projectTitle) {
 
         container.innerHTML = candidates.map(c => {
             const matchedTags = (c.matched_skills || []).map(s => 
-                `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-semibold">✓ ${s}</span>`
+                `<span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-medium">✓ ${s}</span>`
             ).join(" ");
             const missingTags = (c.missing_skills || []).map(s => 
-                `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px]">${s}</span>`
+                `<span class="px-1.5 py-0.5 rounded bg-slate-50 text-slate-500 border border-slate-200 text-[10px]">${s}</span>`
             ).join(" ");
 
             return `
-                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <img src="${c.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" class="w-10 h-10 rounded-full object-cover shadow-xs" />
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h4 class="text-xs font-bold text-slate-900">${c.name}</h4>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-white">${c.match_percentage}% Fit</span>
-                                <span class="text-[10px] text-amber-500 font-semibold">★ ${c.avg_rating}</span>
+                <div class="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between gap-3 hover:border-slate-300 transition-colors">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <img src="${c.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" class="w-9 h-9 rounded-full object-cover shrink-0 border border-slate-200" />
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5">
+                                <h4 class="text-xs font-bold text-slate-900 truncate">${c.name}</h4>
+                                <span class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">${c.match_percentage}% Fit</span>
+                                <span class="text-[10px] text-amber-600 font-semibold">★ ${c.avg_rating}</span>
                             </div>
-                            <p class="text-[11px] text-slate-500">${c.university} • ${c.major} • $${c.hourly_rate}/hr</p>
-                            <div class="flex flex-wrap gap-1 mt-1.5">
+                            <p class="text-[11px] text-slate-500 truncate">${c.university} • ${c.major} • $${c.hourly_rate}/hr</p>
+                            <div class="flex flex-wrap gap-1 mt-1">
                                 ${matchedTags} ${missingTags}
                             </div>
                         </div>
                     </div>
-                    <button onclick="inviteStudentToProject('${c.name}')" class="shrink-0 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-xl text-xs font-semibold shadow-xs">
-                        Invite Student
+                    <button onclick="inviteStudentToProject('${c.name}')" class="shrink-0 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-md text-xs font-semibold">
+                        Invite
                     </button>
                 </div>
             `;
         }).join("");
         lucide.createIcons();
     } catch (err) {
-        container.innerHTML = `<div class="p-4 text-xs text-red-600">${err.message}</div>`;
+        container.innerHTML = `<div class="p-3 text-xs text-rose-600">${err.message}</div>`;
     }
 }
 
 function inviteStudentToProject(name) {
-    showToast(`Invitation sent to ${name} to submit a proposal!`);
+    showToast(`Invitation sent to ${name}!`);
     closeModal("modalMatching");
 }
 
@@ -665,25 +678,25 @@ async function loadMyApplications() {
     try {
         const apps = await api.getMyApplications();
         if (!apps || apps.length === 0) {
-            container.innerHTML = `<div class="py-8 text-center text-xs text-slate-400">You have not submitted any proposals yet.</div>`;
+            container.innerHTML = `<div class="py-6 text-center text-xs text-slate-400">You have not submitted any proposals yet.</div>`;
             return;
         }
 
         container.innerHTML = apps.map(a => {
-            let statusBadge = "bg-slate-100 text-slate-700";
-            if (a.status === "Shortlisted") statusBadge = "bg-amber-100 text-amber-800";
-            if (a.status === "Accepted") statusBadge = "bg-emerald-100 text-emerald-800 font-bold";
-            if (a.status === "Rejected") statusBadge = "bg-rose-100 text-rose-800";
+            let statusBadge = "bg-slate-100 text-slate-700 border-slate-200";
+            if (a.status === "Shortlisted") statusBadge = "bg-amber-50 text-amber-800 border-amber-200";
+            if (a.status === "Accepted") statusBadge = "bg-emerald-50 text-emerald-800 border-emerald-200 font-semibold";
+            if (a.status === "Rejected") statusBadge = "bg-rose-50 text-rose-700 border-rose-200";
 
             return `
-                <div class="py-4 flex items-center justify-between gap-4">
+                <div class="py-3.5 flex items-start justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-2">
-                            <h4 class="text-sm font-bold text-slate-900">${a.project_title}</h4>
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${statusBadge}">${a.status}</span>
+                            <h4 class="text-xs font-bold text-slate-900">${a.project_title}</h4>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-semibold border ${statusBadge}">${a.status}</span>
                         </div>
-                        <p class="text-xs text-slate-500 mt-1">Client: ${a.client_name} • Bid: $${a.bid_amount} • Duration: ${a.estimated_days} days</p>
-                        <p class="text-xs text-slate-600 mt-1.5 italic bg-slate-50 p-2 rounded-xl border border-slate-100">"${a.cover_letter}"</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Client: ${a.client_name} • Bid: $${a.bid_amount} • Duration: ${a.estimated_days} days</p>
+                        <p class="text-xs text-slate-600 mt-1 italic bg-slate-50 p-2 rounded-lg border border-slate-100">"${a.cover_letter}"</p>
                     </div>
                     <div class="text-right shrink-0">
                         <span class="text-[11px] text-slate-400">${formatTimeAgo(a.created_at)}</span>
@@ -692,7 +705,7 @@ async function loadMyApplications() {
             `;
         }).join("");
     } catch (err) {
-        container.innerHTML = `<div class="p-4 text-xs text-red-600">${err.message}</div>`;
+        container.innerHTML = `<div class="p-3 text-xs text-rose-600">${err.message}</div>`;
     }
 }
 
@@ -708,16 +721,16 @@ async function openClientProposalsModal(projectId, title) {
     try {
         const apps = await api.getProjectApplications(projectId);
         if (apps.length === 0) {
-            container.innerHTML = `<div class="py-8 text-center text-xs text-slate-500">No applications received yet.</div>`;
+            container.innerHTML = `<div class="py-6 text-center text-xs text-slate-500">No applications received yet.</div>`;
             return;
         }
 
         container.innerHTML = apps.map(app => {
             return `
-                <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <img src="${app.student_avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" class="w-10 h-10 rounded-full object-cover" />
+                        <div class="flex items-center gap-2.5">
+                            <img src="${app.student_avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" class="w-8 h-8 rounded-full object-cover border border-slate-200" />
                             <div>
                                 <h4 class="text-xs font-bold text-slate-900">${app.student_name}</h4>
                                 <p class="text-[11px] text-slate-500">${app.university || 'University Student'} • ${app.major || ''}</p>
@@ -729,26 +742,26 @@ async function openClientProposalsModal(projectId, title) {
                         </div>
                     </div>
 
-                    <p class="text-xs text-slate-600 bg-white p-2.5 rounded-xl border border-slate-100">
+                    <p class="text-xs text-slate-600 bg-white p-2 rounded-lg border border-slate-200">
                         "${app.cover_letter}"
                     </p>
 
                     <!-- Advanced Status Update Buttons -->
-                    <div class="flex items-center justify-between pt-2 border-t border-slate-200/60">
-                        <span class="text-xs font-semibold text-slate-600">Current Status: <span class="text-blue-600 font-bold">${app.status}</span></span>
-                        <div class="flex items-center gap-1.5">
-                            <button onclick="updateApplicantStatus(${app.id}, 'Under Review')" class="px-2.5 py-1 text-[11px] font-semibold bg-white border border-slate-200 rounded-lg hover:bg-slate-100">Review</button>
-                            <button onclick="updateApplicantStatus(${app.id}, 'Shortlisted')" class="px-2.5 py-1 text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200 rounded-lg hover:bg-amber-100">Shortlist</button>
-                            <button onclick="updateApplicantStatus(${app.id}, 'Accepted')" class="px-2.5 py-1 text-[11px] font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">Accept</button>
-                            <button onclick="updateApplicantStatus(${app.id}, 'Rejected')" class="px-2.5 py-1 text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100">Reject</button>
-                            <button onclick="openReviewModal(${app.project_id}, ${app.student_id}, '${escapeQuote(app.student_name)}')" class="px-2.5 py-1 text-[11px] font-semibold bg-yellow-400 text-slate-900 rounded-lg shadow-xs">Rate ★</button>
+                    <div class="flex items-center justify-between pt-1 border-t border-slate-200">
+                        <span class="text-xs font-medium text-slate-600">Status: <span class="text-slate-900 font-bold">${app.status}</span></span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="updateApplicantStatus(${app.id}, 'Under Review')" class="px-2 py-0.5 text-[11px] font-medium bg-white border border-slate-200 rounded hover:bg-slate-100">Review</button>
+                            <button onclick="updateApplicantStatus(${app.id}, 'Shortlisted')" class="px-2 py-0.5 text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200 rounded hover:bg-amber-100">Shortlist</button>
+                            <button onclick="updateApplicantStatus(${app.id}, 'Accepted')" class="px-2 py-0.5 text-[11px] font-medium bg-emerald-600 text-white rounded hover:bg-emerald-700">Accept</button>
+                            <button onclick="updateApplicantStatus(${app.id}, 'Rejected')" class="px-2 py-0.5 text-[11px] font-medium bg-rose-50 text-rose-700 border border-rose-200 rounded hover:bg-rose-100">Reject</button>
+                            <button onclick="openReviewModal(${app.project_id}, ${app.student_id}, '${escapeQuote(app.student_name)}')" class="px-2 py-0.5 text-[11px] font-medium bg-slate-900 text-white rounded">Rate ★</button>
                         </div>
                     </div>
                 </div>
             `;
         }).join("");
     } catch (err) {
-        container.innerHTML = `<div class="p-4 text-xs text-red-600">${err.message}</div>`;
+        container.innerHTML = `<div class="p-3 text-xs text-rose-600">${err.message}</div>`;
     }
 }
 
@@ -802,7 +815,7 @@ async function submitNewProject(e) {
 }
 
 // ---------------------------------------------------------------------------
-// STUDENT SKILL PROFILE & PORTFOLIO MANAGEMENT (Required 8 Marks + Advanced 5 Marks)
+// STUDENT SKILL PROFILE & PORTFOLIO MANAGEMENT
 // ---------------------------------------------------------------------------
 async function openProfileModal() {
     document.getElementById("modalProfile").classList.remove("hidden");
@@ -830,9 +843,9 @@ function renderProfileSkills(skills) {
         return;
     }
     container.innerHTML = skills.map(sk => `
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 text-slate-800 text-xs font-semibold">
+        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-100 text-slate-800 text-xs font-medium border border-slate-200">
             <span>${sk.skill_name} (${sk.proficiency})</span>
-            <button onclick="deleteSkill('${sk.skill_name}')" class="text-slate-400 hover:text-rose-600">×</button>
+            <button onclick="deleteSkill('${sk.skill_name}')" class="text-slate-400 hover:text-rose-600 font-bold">×</button>
         </span>
     `).join("");
 }
@@ -892,16 +905,16 @@ function renderProfilePortfolios(portfolios) {
         return;
     }
     container.innerHTML = portfolios.map(p => `
-        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
-            <div>
-                <h5 class="text-xs font-bold text-slate-900">${p.title}</h5>
-                <p class="text-[11px] text-slate-500">${p.description}</p>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="text-[10px] text-blue-600 font-semibold">${p.tags || ''}</span>
-                    ${p.project_url ? `<a href="${p.project_url}" target="_blank" class="text-[10px] text-slate-400 hover:text-slate-800 underline">View Link</a>` : ''}
+        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between">
+            <div class="min-w-0 pr-2">
+                <h5 class="text-xs font-bold text-slate-900 truncate">${p.title}</h5>
+                <p class="text-[11px] text-slate-500 line-clamp-1">${p.description}</p>
+                <div class="flex items-center gap-2 mt-0.5">
+                    <span class="text-[10px] text-slate-600 font-medium">${p.tags || ''}</span>
+                    ${p.project_url ? `<a href="${p.project_url}" target="_blank" class="text-[10px] text-blue-600 hover:underline">View Link</a>` : ''}
                 </div>
             </div>
-            <button onclick="deletePortfolioItem(${p.id})" class="text-rose-600 text-xs font-semibold hover:underline">Remove</button>
+            <button onclick="deletePortfolioItem(${p.id})" class="text-rose-600 text-xs font-semibold hover:underline shrink-0">Delete</button>
         </div>
     `).join("");
 }
@@ -946,36 +959,36 @@ async function loadFreelancers() {
         const students = await api.listStudents();
         container.innerHTML = students.map(s => {
             const skillChips = (s.skills || []).map(sk => `
-                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-medium">${sk.skill_name}</span>
+                <span class="skill-tag">${sk.skill_name}</span>
             `).join("");
 
             return `
-                <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between">
+                <div class="bg-white rounded-xl border border-slate-200 p-4 hover:border-slate-300 transition-colors flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center gap-3 mb-3">
-                            <img src="${s.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" class="w-12 h-12 rounded-full object-cover shadow-sm ring-2 ring-slate-100" />
-                            <div>
-                                <h4 class="text-sm font-bold text-slate-900">${s.name}</h4>
-                                <p class="text-xs text-slate-500">${s.university} • ${s.major}</p>
-                                <div class="flex items-center gap-1.5 mt-0.5">
+                        <div class="flex items-center gap-2.5 mb-2.5">
+                            <img src="${s.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" class="w-10 h-10 rounded-full object-cover border border-slate-200" />
+                            <div class="min-w-0">
+                                <h4 class="text-xs font-bold text-slate-900 truncate">${s.name}</h4>
+                                <p class="text-[11px] text-slate-500 truncate">${s.university} • ${s.major}</p>
+                                <div class="flex items-center gap-1 mt-0.5">
                                     <span class="text-xs text-amber-500 font-bold">★ ${s.avg_rating}</span>
-                                    <span class="text-[11px] text-slate-400">(${s.review_count} reviews)</span>
+                                    <span class="text-[10px] text-slate-400">(${s.review_count} reviews)</span>
                                 </div>
                             </div>
                         </div>
-                        <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">${s.bio || 'Motivated university student looking for opportunities.'}</p>
-                        <div class="flex flex-wrap gap-1 mb-4">${skillChips}</div>
+                        <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-2.5">${s.bio || 'Motivated university student looking for opportunities.'}</p>
+                        <div class="flex flex-wrap gap-1 mb-3">${skillChips}</div>
                     </div>
-                    <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                    <div class="flex items-center justify-between pt-2.5 border-t border-slate-100">
                         <span class="text-xs font-bold text-slate-900 font-mono">$${s.hourly_rate}/hr</span>
-                        <button onclick="showToast('Message dialog opened with ${s.name}')" class="px-4 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition-all">Contact</button>
+                        <button onclick="showToast('Contact request initiated with ${s.name}')" class="px-3 py-1 rounded-md bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition-colors">Contact</button>
                     </div>
                 </div>
             `;
         }).join("");
         lucide.createIcons();
     } catch (err) {
-        container.innerHTML = `<div class="p-4 text-xs text-red-600">${err.message}</div>`;
+        container.innerHTML = `<div class="p-3 text-xs text-rose-600">${err.message}</div>`;
     }
 }
 
@@ -993,25 +1006,25 @@ async function loadAdminDashboard() {
         // Render Stats Grid
         const grid = document.getElementById("adminStatsGrid");
         grid.innerHTML = `
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                <span class="text-xs text-slate-500 font-medium">Total Users</span>
-                <h4 class="text-2xl font-bold text-slate-900 mt-1">${stats.total_users}</h4>
-                <span class="text-[11px] text-emerald-600 font-semibold">${stats.total_students} Students • ${stats.total_clients} Clients</span>
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+                <span class="text-[11px] text-slate-500 font-medium">Total Users</span>
+                <h4 class="text-xl font-bold text-slate-900 mt-0.5">${stats.total_users}</h4>
+                <span class="text-[10px] text-slate-500">${stats.total_students} Students • ${stats.total_clients} Clients</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                <span class="text-xs text-slate-500 font-medium">Total Projects</span>
-                <h4 class="text-2xl font-bold text-slate-900 mt-1">${stats.total_projects}</h4>
-                <span class="text-[11px] text-slate-400">Open & Active</span>
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+                <span class="text-[11px] text-slate-500 font-medium">Total Projects</span>
+                <h4 class="text-xl font-bold text-slate-900 mt-0.5">${stats.total_projects}</h4>
+                <span class="text-[10px] text-slate-500">Active postings</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                <span class="text-xs text-slate-500 font-medium">Proposals Submitted</span>
-                <h4 class="text-2xl font-bold text-slate-900 mt-1">${stats.total_applications}</h4>
-                <span class="text-[11px] text-blue-600 font-semibold">Active matching</span>
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+                <span class="text-[11px] text-slate-500 font-medium">Proposals</span>
+                <h4 class="text-xl font-bold text-slate-900 mt-0.5">${stats.total_applications}</h4>
+                <span class="text-[10px] text-slate-500">Live submissions</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                <span class="text-xs text-slate-500 font-medium">Total Platform Volume</span>
-                <h4 class="text-2xl font-bold text-slate-900 mt-1 font-mono">$${stats.total_budget_volume}</h4>
-                <span class="text-[11px] text-purple-600 font-semibold">${stats.total_reviews} Reviews logged</span>
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+                <span class="text-[11px] text-slate-500 font-medium">Total Volume</span>
+                <h4 class="text-xl font-bold text-slate-900 mt-0.5 font-mono">$${stats.total_budget_volume}</h4>
+                <span class="text-[10px] text-slate-500">${stats.total_reviews} Reviews logged</span>
             </div>
         `;
 
@@ -1019,13 +1032,13 @@ async function loadAdminDashboard() {
         const userTable = document.getElementById("adminUserTable");
         userTable.innerHTML = stats.users.map(u => `
             <tr class="hover:bg-slate-50">
-                <td class="py-2.5 px-3 font-semibold text-slate-900">${u.name}</td>
-                <td class="py-2.5 px-3 text-slate-600">${u.email}</td>
-                <td class="py-2.5 px-3">
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : u.role === 'client' ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-700'}">${u.role}</span>
+                <td class="py-2 px-3 font-semibold text-slate-900">${u.name}</td>
+                <td class="py-2 px-3 text-slate-600">${u.email}</td>
+                <td class="py-2 px-3">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold border ${u.role === 'admin' ? 'bg-slate-900 text-white' : u.role === 'client' ? 'bg-slate-100 text-slate-800 border-slate-200' : 'bg-slate-50 text-slate-700 border-slate-200'}">${u.role}</span>
                 </td>
-                <td class="py-2.5 px-3 text-slate-500">${u.country}</td>
-                <td class="py-2.5 px-3">
+                <td class="py-2 px-3 text-slate-500">${u.country}</td>
+                <td class="py-2 px-3">
                     ${u.role !== 'admin' ? `<button onclick="deleteAdminUser(${u.id})" class="text-rose-600 hover:underline font-semibold">Delete</button>` : `<span class="text-slate-300">Protected</span>`}
                 </td>
             </tr>
@@ -1063,9 +1076,9 @@ function setRating(val) {
     const btns = document.querySelectorAll("#starRatingSelector .star-btn");
     btns.forEach((b, idx) => {
         if (idx < val) {
-            b.className = "star-btn text-2xl text-amber-400";
+            b.className = "star-btn text-xl text-amber-400";
         } else {
-            b.className = "star-btn text-2xl text-slate-300";
+            b.className = "star-btn text-xl text-slate-300";
         }
     });
 }
@@ -1096,7 +1109,7 @@ function closeModal(id) {
 
 // Close any open card menus when clicking outside
 document.addEventListener("click", (e) => {
-    if (!e.target.closest(".relative.group") && !e.target.closest("[id^='card-menu-']")) {
+    if (!e.target.closest(".relative") && !e.target.closest("[id^='card-menu-']")) {
         document.querySelectorAll("[id^='card-menu-']").forEach(el => el.classList.add("hidden"));
     }
 });
