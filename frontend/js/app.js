@@ -166,9 +166,13 @@ function handleProfileBadgeClick() {
 
 function openAuthModal() {
     if (currentUser) {
+        const wasAdmin = currentUser.role === "admin";
         api.removeToken();
         currentUser = null;
         updateUserUI();
+        if (wasAdmin || activeNav === "admin") {
+            switchNav("projects");
+        }
         showToast("Signed out successfully");
         return;
     }
@@ -179,19 +183,90 @@ function openAuthModal() {
 function setAuthTab(tab) {
     const tabLogin = document.getElementById("authTabLogin");
     const tabReg = document.getElementById("authTabRegister");
+    const tabAdmin = document.getElementById("authTabAdmin");
     const formLogin = document.getElementById("formLogin");
     const formReg = document.getElementById("formRegister");
+    const panelAdmin = document.getElementById("panelAdminAuth");
+
+    tabLogin.className = "text-xs font-bold text-slate-400 hover:text-slate-700 pb-2";
+    tabReg.className = "text-xs font-bold text-slate-400 hover:text-slate-700 pb-2";
+    if (tabAdmin) tabAdmin.className = "ml-auto text-xs font-bold text-purple-600 hover:text-purple-800 pb-2 flex items-center gap-1";
+
+    formLogin.classList.add("hidden");
+    formReg.classList.add("hidden");
+    if (panelAdmin) panelAdmin.classList.add("hidden");
 
     if (tab === "login") {
         tabLogin.className = "text-xs font-bold text-slate-900 border-b-2 border-slate-900 pb-2";
-        tabReg.className = "text-xs font-bold text-slate-400 hover:text-slate-700 pb-2";
         formLogin.classList.remove("hidden");
-        formReg.classList.add("hidden");
-    } else {
+    } else if (tab === "register") {
         tabReg.className = "text-xs font-bold text-slate-900 border-b-2 border-slate-900 pb-2";
-        tabLogin.className = "text-xs font-bold text-slate-400 hover:text-slate-700 pb-2";
         formReg.classList.remove("hidden");
-        formLogin.classList.add("hidden");
+    } else if (tab === "admin") {
+        if (tabAdmin) tabAdmin.className = "ml-auto text-xs font-bold text-purple-800 border-b-2 border-purple-700 pb-2 flex items-center gap-1";
+        if (panelAdmin) panelAdmin.classList.remove("hidden");
+        toggleAdminAuthMode("signin");
+    }
+    if (typeof lucide !== "undefined") lucide.createIcons();
+}
+
+function toggleAdminAuthMode(mode) {
+    const formSignin = document.getElementById("formAdminLogin");
+    const formReg = document.getElementById("formAdminRegister");
+    const btnSignin = document.getElementById("btnAdminModeSignin");
+    const btnReg = document.getElementById("btnAdminModeRegister");
+    if (!formSignin || !formReg) return;
+
+    if (mode === "signin") {
+        formSignin.classList.remove("hidden");
+        formReg.classList.add("hidden");
+        btnSignin.className = "py-1.5 text-xs font-semibold rounded-lg bg-white text-slate-900 shadow-2xs";
+        btnReg.className = "py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900";
+    } else {
+        formReg.classList.remove("hidden");
+        formSignin.classList.add("hidden");
+        btnReg.className = "py-1.5 text-xs font-semibold rounded-lg bg-white text-slate-900 shadow-2xs";
+        btnSignin.className = "py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900";
+    }
+}
+
+async function handleAdminLoginForm(e) {
+    e.preventDefault();
+    const email = document.getElementById("adminLoginEmail").value.trim();
+    const password = document.getElementById("adminLoginPassword").value;
+
+    try {
+        const res = await api.login(email, password);
+        if (res.user.role !== "admin") {
+            api.removeToken();
+            throw new Error("Access denied: This portal is for Administrators only.");
+        }
+        currentUser = res.user;
+        updateUserUI();
+        closeModal("modalAuth");
+        showToast(`Welcome, Administrator ${currentUser.name}!`);
+        switchNav("admin");
+    } catch (err) {
+        showToast(err.message, "error");
+    }
+}
+
+async function handleAdminRegisterForm(e) {
+    e.preventDefault();
+    const name = document.getElementById("adminRegName").value.trim();
+    const email = document.getElementById("adminRegEmail").value.trim();
+    const password = document.getElementById("adminRegPassword").value;
+    const admin_key = document.getElementById("adminRegKey").value.trim();
+
+    try {
+        const res = await api.register({ role: "admin", name, email, password, admin_key });
+        currentUser = res.user;
+        updateUserUI();
+        closeModal("modalAuth");
+        showToast(`Administrator account created for ${currentUser.name}!`);
+        switchNav("admin");
+    } catch (err) {
+        showToast(err.message, "error");
     }
 }
 
@@ -212,7 +287,11 @@ async function handleLoginForm(e) {
         updateUserUI();
         closeModal("modalAuth");
         showToast(`Welcome back, ${currentUser.name}!`);
-        loadProjects();
+        if (currentUser.role === "admin") {
+            switchNav("admin");
+        } else {
+            switchNav("projects");
+        }
     } catch (err) {
         showToast(err.message, "error");
     }

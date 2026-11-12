@@ -450,6 +450,9 @@ class PrilansStore {
     }
 
     register(data) {
+        if (data.role === "admin" && data.admin_key !== "PRILANS-ADMIN-2026") {
+            throw new Error("Invalid Admin Access Key. Only authorized administrators can register.");
+        }
         const existing = this.findUserByEmail(data.email);
         if (existing) {
             throw new Error("Email already registered");
