@@ -24,3 +24,4 @@ def get_recommended_students(project_id: int, current_user: dict = Depends(get_c
         "total_matched": len(matches),
         "candidates": matches
     }
+

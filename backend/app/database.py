@@ -145,3 +145,4 @@ def init_db():
             FOREIGN KEY (reviewee_id) REFERENCES users (id) ON DELETE CASCADE
         );
         """)
+

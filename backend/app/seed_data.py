@@ -317,3 +317,4 @@ def seed_database():
         """, (p1_id, hav_client_id, shiblu_id))
 
         print("Database seeded successfully with all required, advanced, and bonus test scenarios!")
+

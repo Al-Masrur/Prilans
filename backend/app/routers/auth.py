@@ -78,3 +78,4 @@ def get_me(current_user: dict = Depends(get_current_user)):
             cursor.execute("SELECT skill_name, proficiency FROM student_skills WHERE user_id = ?", (current_user["id"],))
             current_user["skills"] = [dict(r) for r in cursor.fetchall()]
         return current_user
+

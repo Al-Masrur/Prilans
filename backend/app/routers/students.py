@@ -133,3 +133,4 @@ def delete_portfolio(portfolio_id: int, current_user: dict = Depends(require_rol
         cursor = conn.cursor()
         cursor.execute("DELETE FROM portfolios WHERE id = ? AND user_id = ?", (portfolio_id, current_user["id"]))
         return {"message": "Portfolio item deleted"}
+

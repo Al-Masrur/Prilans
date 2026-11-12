@@ -1,0 +1,13 @@
+{
+  "name": "prilans",
+  "version": "1.0.0",
+  "description": "Prilans - Student Freelancing & Digital Services Marketplace",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/verify.js",
+    "build": "echo 'Ready for Vercel deployment'"
+  },
+  "keywords": ["freelance", "students", "marketplace", "vercel"],
+  "author": "Prilans Team",
+  "license": "MIT"
+}

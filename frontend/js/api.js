@@ -1,7 +1,10 @@
-// API Client for Prilans
-const API_BASE = window.location.origin + "/api";
+// Universal API Adapter for Prilans
+// Backed by PrilansStore for 100% free Vercel deployment with zero database maintenance.
 
 const api = {
+    store: window.prilansStore,
+
+    // Token & Auth session
     getToken() {
         return localStorage.getItem("prilans_token");
     },
@@ -10,204 +13,157 @@ const api = {
     },
     removeToken() {
         localStorage.removeItem("prilans_token");
-        localStorage.removeItem("prilans_user");
+        localStorage.removeItem("prilans_user_id");
     },
-    getUser() {
-        const u = localStorage.getItem("prilans_user");
-        return u ? JSON.parse(u) : null;
+    getUserId() {
+        const id = localStorage.getItem("prilans_user_id");
+        return id ? parseInt(id) : null;
     },
-    setUser(user) {
-        localStorage.setItem("prilans_user", JSON.stringify(user));
-    },
-
-    async request(endpoint, options = {}) {
-        const headers = {
-            "Content-Type": "application/json",
-            ...(options.headers || {})
-        };
-        const token = this.getToken();
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
-
-        const res = await fetch(`${API_BASE}${endpoint}`, {
-            ...options,
-            headers
-        });
-
-        if (res.status === 401) {
-            // Token expired or invalid
-            console.warn("Session expired or unauthorized");
-        }
-
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) {
-            throw new Error(data.detail || `Request failed with status ${res.status}`);
-        }
-        return data;
+    setUserId(id) {
+        localStorage.setItem("prilans_user_id", id);
     },
 
     // Auth
     async login(email, password) {
-        const data = await this.request("/auth/login", {
-            method: "POST",
-            body: JSON.stringify({ email, password })
-        });
-        this.setToken(data.access_token);
-        this.setUser(data.user);
-        return data;
+        const user = this.store.login(email, password);
+        const token = "token_" + user.id + "_" + Date.now();
+        this.setToken(token);
+        this.setUserId(user.id);
+        return { access_token: token, user };
     },
 
     async register(userData) {
-        const data = await this.request("/auth/register", {
-            method: "POST",
-            body: JSON.stringify(userData)
-        });
-        this.setToken(data.access_token);
-        this.setUser(data.user);
-        return data;
+        const user = this.store.register(userData);
+        const token = "token_" + user.id + "_" + Date.now();
+        this.setToken(token);
+        this.setUserId(user.id);
+        return { access_token: token, user };
     },
 
     async getMe() {
-        const data = await this.request("/auth/me");
-        this.setUser(data);
-        return data;
+        const uid = this.getUserId();
+        if (!uid) throw new Error("Not authenticated");
+        const user = this.store.findUserById(uid);
+        if (!user) throw new Error("User not found");
+        return user;
     },
 
     // Projects
     async getProjects(filters = {}) {
-        const params = new URLSearchParams();
-        if (filters.keyword) params.append("keyword", filters.keyword);
-        if (filters.category && filters.category !== "All") params.append("category", filters.category);
-        if (filters.experience_level && filters.experience_level !== "Any") params.append("experience_level", filters.experience_level);
-        if (filters.project_type) params.append("project_type", filters.project_type);
-        if (filters.budget_range && filters.budget_range !== "any") params.append("budget_range", filters.budget_range);
-        if (filters.proposals_range && filters.proposals_range !== "any") params.append("proposals_range", filters.proposals_range);
-        if (filters.sort_by) params.append("sort_by", filters.sort_by);
-
-        return await this.request(`/projects/?${params.toString()}`);
+        const uid = this.getUserId();
+        return this.store.getProjects(filters, uid);
     },
 
-    async getProjectDetails(id) {
-        return await this.request(`/projects/${id}`);
+    async computeFilterCounts() {
+        return this.store.computeFilterCounts();
     },
 
     async createProject(projectData) {
-        return await this.request("/projects/", {
-            method: "POST",
-            body: JSON.stringify(projectData)
-        });
+        const user = await this.getMe();
+        if (user.role === "student") {
+            throw new Error("Only clients can post projects");
+        }
+        return this.store.createProject(user, projectData);
     },
 
     async deleteProject(id) {
-        return await this.request(`/projects/${id}`, {
-            method: "DELETE"
-        });
+        return this.store.deleteProject(id);
     },
 
     // Applications
     async applyForProject(projectId, applicationData) {
-        return await this.request(`/applications/projects/${projectId}/apply`, {
-            method: "POST",
-            body: JSON.stringify(applicationData)
-        });
+        const user = await this.getMe();
+        if (user.role !== "student") {
+            throw new Error("Only students can apply for projects");
+        }
+        return this.store.applyForProject(user, projectId, applicationData);
     },
 
     async getMyApplications() {
-        return await this.request("/applications/my");
+        const uid = this.getUserId();
+        if (!uid) return [];
+        return this.store.getMyApplications(uid);
     },
 
     async getProjectApplications(projectId) {
-        return await this.request(`/applications/projects/${projectId}`);
+        return this.store.getProjectApplications(projectId);
     },
 
     async updateApplicationStatus(applicationId, status) {
-        return await this.request(`/applications/${applicationId}/status`, {
-            method: "PUT",
-            body: JSON.stringify({ status })
-        });
+        return this.store.updateApplicationStatus(applicationId, status);
     },
 
     // Student Profile & Skills
     async getMyProfile() {
-        return await this.request("/students/profile");
+        const user = await this.getMe();
+        return {
+            user,
+            profile: user.profile || {},
+            skills: user.skills || [],
+            portfolios: user.portfolios || []
+        };
     },
 
     async updateProfile(profileData) {
-        return await this.request("/students/profile", {
-            method: "PUT",
-            body: JSON.stringify(profileData)
-        });
+        const uid = this.getUserId();
+        return this.store.updateProfile(uid, profileData);
     },
 
     async addSkill(skill_name, proficiency) {
-        return await this.request("/students/skills", {
-            method: "POST",
-            body: JSON.stringify({ skill_name, proficiency })
-        });
+        const uid = this.getUserId();
+        return this.store.addSkill(uid, skill_name, proficiency);
     },
 
     async removeSkill(skill_name) {
-        return await this.request(`/students/skills/${encodeURIComponent(skill_name)}`, {
-            method: "DELETE"
-        });
+        const uid = this.getUserId();
+        return this.store.removeSkill(uid, skill_name);
     },
 
     async addPortfolio(portfolioData) {
-        return await this.request("/students/portfolio", {
-            method: "POST",
-            body: JSON.stringify(portfolioData)
-        });
+        const uid = this.getUserId();
+        return this.store.addPortfolio(uid, portfolioData);
     },
 
     async deletePortfolio(id) {
-        return await this.request(`/students/portfolio/${id}`, {
-            method: "DELETE"
-        });
+        const uid = this.getUserId();
+        return this.store.deletePortfolio(uid, id);
     },
 
     async listStudents(params = {}) {
-        const q = new URLSearchParams(params).toString();
-        return await this.request(`/students/?${q}`);
+        return this.store.listStudents(params);
     },
 
     // Recommendations & Matching Engine
     async getRecommendedProjects() {
-        return await this.request("/recommendations/projects");
+        const uid = this.getUserId();
+        return this.store.recommendProjectsForStudent(uid);
     },
 
     async matchStudentsForProject(projectId) {
-        return await this.request(`/recommendations/match-students/${projectId}`);
+        const candidates = this.store.matchStudentsForProject(projectId);
+        return {
+            project_id: projectId,
+            total_matched: candidates.length,
+            candidates
+        };
     },
 
     // Reviews
     async submitReview(reviewData) {
-        return await this.request("/reviews/", {
-            method: "POST",
-            body: JSON.stringify(reviewData)
-        });
+        const user = await this.getMe();
+        return this.store.addReview(user, reviewData);
     },
 
     async getUserReviews(userId) {
-        return await this.request(`/reviews/user/${userId}`);
+        return this.store.getUserReviewStats(userId);
     },
 
     // Admin
     async getAdminStats() {
-        return await this.request("/admin/stats");
-    },
-
-    async getAdminUsers() {
-        return await this.request("/admin/users");
+        return this.store.getAdminStats();
     },
 
     async deleteAdminUser(id) {
-        return await this.request(`/admin/users/${id}`, {
-            method: "DELETE"
-        });
-    },
-
-    async getAdminProjects() {
-        return await this.request("/admin/projects");
+        return this.store.deleteUser(id);
     }
 };

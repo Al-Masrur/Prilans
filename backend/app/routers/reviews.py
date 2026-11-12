@@ -48,3 +48,4 @@ def get_user_reviews(user_id: int):
             "total_reviews": stats["total_reviews"] if stats else 0,
             "reviews": reviews
         }
+

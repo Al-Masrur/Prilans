@@ -108,3 +108,4 @@ def update_application_status(
         """, (update.status, application_id))
         
         return {"message": f"Application status updated to {update.status}", "status": update.status}
+

@@ -86,3 +86,4 @@ def get_all_admin_projects(current_user: dict = Depends(require_role("admin"))):
             ORDER BY p.created_at DESC
         """)
         return [dict(r) for r in cursor.fetchall()]
+

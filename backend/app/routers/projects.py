@@ -167,3 +167,4 @@ def delete_project(project_id: int, current_user: dict = Depends(get_current_use
             raise HTTPException(status_code=403, detail="Not authorized to delete this project")
         cursor.execute("DELETE FROM projects WHERE id = ?", (project_id,))
         return {"message": "Project removed"}
+
