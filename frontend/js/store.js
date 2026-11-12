@@ -364,56 +364,6 @@ class PrilansStore {
             ]
         };
 
-        // Add mock applications to match proposal counts in Image 1
-        for (let i = 6; i <= 15; i++) {
-            this.db.applications.push({
-                id: i,
-                project_id: 1,
-                student_id: i % 2 === 0 ? 2 : 3,
-                bid_amount: 15.0 + i,
-                cover_letter: `Application and portfolio review from student #${i}`,
-                estimated_days: 5 + (i % 3),
-                status: "Submitted",
-                created_at: mins(14 - (i % 10))
-            });
-        }
-        for (let i = 16; i <= 34; i++) {
-            this.db.applications.push({
-                id: i,
-                project_id: 2,
-                student_id: i % 2 === 0 ? 2 : 3,
-                bid_amount: 20.0 + (i % 5),
-                cover_letter: `Sample proposal submission #${i}`,
-                estimated_days: 4 + (i % 3),
-                status: "Submitted",
-                created_at: mins(19)
-            });
-        }
-        for (let i = 35; i <= 49; i++) {
-            this.db.applications.push({
-                id: i,
-                project_id: 3,
-                student_id: 2,
-                bid_amount: 25.0,
-                cover_letter: `E-commerce proposal #${i}`,
-                estimated_days: 7,
-                status: "Submitted",
-                created_at: mins(24)
-            });
-        }
-        for (let i = 50; i <= 68; i++) {
-            this.db.applications.push({
-                id: i,
-                project_id: 4,
-                student_id: 1,
-                bid_amount: 50.0,
-                cover_letter: `Figma redesign proposal #${i}`,
-                estimated_days: 10,
-                status: "Submitted",
-                created_at: mins(30)
-            });
-        }
-
         this.save();
     }
 
@@ -595,6 +545,14 @@ class PrilansStore {
         return counts;
     }
 
+    getDistinctCategories() {
+        const categories = new Set();
+        this.db.projects.forEach(p => {
+            if (p.category) categories.add(p.category.trim());
+        });
+        return Array.from(categories);
+    }
+
     // -----------------------------------------------------------------------
     // PROJECTS & DYNAMIC SEARCH
     // -----------------------------------------------------------------------
@@ -603,12 +561,18 @@ class PrilansStore {
             const client = this.findUserById(p.client_id) || {};
             const pApps = this.db.applications.filter(a => a.project_id === p.id);
             const has_applied = currentUserId ? pApps.some(a => a.student_id === currentUserId) : false;
+            const clientReviews = this.db.reviews.filter(r => r.reviewee_id === p.client_id);
+            const clientAvg = clientReviews.length > 0
+                ? (clientReviews.reduce((sum, r) => sum + r.rating, 0) / clientReviews.length).toFixed(1)
+                : null;
+            const client_rating_display = clientAvg ? `★ ${clientAvg} (${clientReviews.length} reviews)` : "Verified Client";
 
             return {
                 ...p,
                 client_name: client.name || p.client_name || "Verified Client",
                 client_country: client.country || p.client_country || "United States",
                 client_avatar: client.avatar_url || "",
+                client_rating_display,
                 proposals_count: pApps.length,
                 has_applied
             };

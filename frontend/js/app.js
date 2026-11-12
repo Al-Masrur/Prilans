@@ -10,9 +10,29 @@ let activeFilterProjectType = ""; // "" (all), "Hourly", "Fixed Price"
 document.addEventListener("DOMContentLoaded", async () => {
     lucide.createIcons();
     await initAuth();
+    await loadDynamicCategories();
     await updateDynamicFilterCounts();
     await loadProjects();
 });
+
+async function loadDynamicCategories() {
+    try {
+        const categories = await api.getCategories();
+        const select = document.getElementById("filterCategory");
+        if (!select) return;
+        const currentVal = select.value;
+        select.innerHTML = '<option value="All">All Categories</option>';
+        categories.forEach(cat => {
+            const opt = document.createElement("option");
+            opt.value = cat;
+            opt.textContent = cat;
+            if (cat === currentVal) opt.selected = true;
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error("Failed to load categories", e);
+    }
+}
 
 // Toast notification helper
 function showToast(message, type = "success") {
@@ -472,7 +492,7 @@ function renderProjects(projects, isRecommended = false) {
                             ${p.client_country || 'United States'}
                         </span>
                         <span>•</span>
-                        <span class="text-slate-400 text-[11px]">100% Job Success</span>
+                        <span class="text-slate-400 text-[11px]">${p.client_rating_display || 'Verified Client'}</span>
                     </div>
 
                     <!-- Description Snippet -->

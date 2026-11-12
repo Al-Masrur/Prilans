@@ -58,6 +58,10 @@ const api = {
         return this.store.computeFilterCounts();
     },
 
+    async getCategories() {
+        return this.store.getDistinctCategories();
+    },
+
     async createProject(projectData) {
         const user = await this.getMe();
         if (user.role === "student") {
