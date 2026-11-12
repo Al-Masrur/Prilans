@@ -36,36 +36,36 @@
 <body class="bg-[#f8fafc] text-slate-900 antialiased flex flex-col h-screen overflow-hidden font-sans">
 
   <!-- ========================================================================= -->
-  <!-- TOP GLOBAL HEADER BAR (Full width across entire page - Exact Mockup)       -->
+  <!-- TOP GLOBAL HEADER BAR (Snug height matching search bar - touching edge)     -->
   <!-- ========================================================================= -->
-  <header class="h-18 bg-white border-b border-slate-200/90 px-6 flex items-center justify-between shrink-0 gap-4 z-30">
+  <header class="h-14 bg-white border-b border-slate-200 px-5 flex items-center justify-between shrink-0 gap-4 z-30">
     
     <!-- Left Section: Logo + User Profile Badge -->
-    <div class="flex items-center gap-6 shrink-0">
+    <div class="flex items-center gap-4 shrink-0">
       <!-- Prilans Brand Logo -->
-      <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchNav('projects')">
-        <div class="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs">
-          <i data-lucide="layers" class="w-5 h-5"></i>
+      <div class="flex items-center gap-2 cursor-pointer" onclick="switchNav('projects')">
+        <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-white">
+          <i data-lucide="layers" class="w-4 h-4"></i>
         </div>
-        <span class="text-2xl font-bold tracking-tight text-slate-900">Prilans<span class="text-blue-600">.</span></span>
+        <span class="text-xl font-bold tracking-tight text-slate-900">Prilans<span class="text-blue-600">.</span></span>
       </div>
 
-      <!-- User Profile Dropdown Badge (Exact placement from mockup) -->
-      <div id="userProfileBadge" class="flex items-center gap-3 py-1.5 px-3 rounded-full border border-slate-200/80 hover:bg-slate-50 transition-colors cursor-pointer select-none" onclick="handleProfileBadgeClick()">
-        <img id="sidebarUserAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" alt="Avatar" class="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200" />
+      <!-- User Profile Dropdown Badge -->
+      <div id="userProfileBadge" class="flex items-center gap-2.5 h-10 py-1 px-2.5 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer select-none" onclick="handleProfileBadgeClick()">
+        <img id="sidebarUserAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" alt="Avatar" class="w-7 h-7 rounded-full object-cover ring-1 ring-slate-200" />
         <div class="hidden sm:block text-left">
-          <p id="sidebarUserName" class="text-xs font-bold text-slate-900 leading-tight">Akramul Hossain Shiblu</p>
-          <p id="sidebarUserEmail" class="text-[10px] text-slate-500 leading-tight">akramulhossain@gmail.com</p>
+          <p id="sidebarUserName" class="text-xs font-bold text-slate-900 leading-none">Akramul Hossain Shiblu</p>
+          <p id="sidebarUserEmail" class="text-[10px] text-slate-500 leading-none mt-0.5">akramulhossain@gmail.com</p>
         </div>
         <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
       </div>
     </div>
 
-    <!-- Center Section: Search Bar (Exact Search + Location + Find Projects Button) -->
-    <div class="flex-1 max-w-2xl hidden md:flex items-center bg-slate-50/80 border border-slate-200 rounded-full p-1.5 focus-within:ring-2 focus-within:ring-slate-900/10 focus-within:border-slate-300 focus-within:bg-white transition-all shadow-xs">
+    <!-- Center Section: Search Bar (Touching the edge just a bit) -->
+    <div class="flex-1 max-w-2xl hidden md:flex items-center bg-slate-50 border border-slate-200 rounded-full p-1 h-11 focus-within:ring-1 focus-within:ring-slate-900 focus-within:border-slate-900 focus-within:bg-white transition-all">
       <!-- Keyword Input -->
-      <div class="flex items-center gap-2.5 flex-1 px-3">
-        <i data-lucide="search" class="w-4 h-4 text-slate-400 shrink-0"></i>
+      <div class="flex items-center gap-2 flex-1 px-3">
+        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
         <input 
           type="text" 
           id="searchInput"
@@ -75,11 +75,11 @@
         />
       </div>
 
-      <div class="h-5 w-[1px] bg-slate-200 shrink-0"></div>
+      <div class="h-4 w-[1px] bg-slate-200 shrink-0"></div>
 
       <!-- Location Input -->
-      <div class="flex items-center gap-2.5 flex-1 px-3">
-        <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 shrink-0"></i>
+      <div class="flex items-center gap-2 flex-1 px-3">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
         <input 
           type="text" 
           id="locationInput"
@@ -92,32 +92,33 @@
       <!-- Find Projects Black Pill Button -->
       <button 
         onclick="handleSearch()"
-        class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-5 py-2 rounded-full transition-all shrink-0 shadow-xs flex items-center gap-1.5">
+        class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 h-9 rounded-full transition-all shrink-0 flex items-center gap-1">
         <span>Find Projects</span>
       </button>
     </div>
 
     <!-- Right Section: Post Job, View Controls, Auth -->
-    <div class="flex items-center gap-3 shrink-0">
+    <div class="flex items-center gap-2.5 shrink-0">
       <button 
         id="btnPostProject" 
         onclick="openPostProjectModal()"
-        class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-xs transition-colors">
+        class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 h-9 rounded-full transition-colors">
         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
         <span>Post a Job</span>
       </button>
 
       <!-- Grid / List Layout Switcher (Mockup) -->
-      <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200/80">
+      <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
         <button class="p-1.5 rounded-md bg-white text-slate-900 shadow-2xs"><i data-lucide="grid" class="w-3.5 h-3.5"></i></button>
         <button class="p-1.5 rounded-md text-slate-400 hover:text-slate-800"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
       </div>
 
-      <button onclick="openAuthModal()" id="btnAuth" class="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3 py-1.5 rounded-lg hover:bg-slate-100 border border-slate-200 transition-colors">
+      <button onclick="openAuthModal()" id="btnAuth" class="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3 h-9 rounded-lg hover:bg-slate-100 border border-slate-200 transition-colors flex items-center justify-center">
         Sign In
       </button>
     </div>
   </header>
+
 
   <!-- ========================================================================= -->
   <!-- HERO BANNER SECTION (Prominent Headline & Tab Controls)                   -->
