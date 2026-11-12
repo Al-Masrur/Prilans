@@ -156,7 +156,7 @@ assert(adminStats.total_users > 0 && adminStats.total_projects > 0 && adminStats
 // 12. Vercel Configuration Verification
 console.log("\n[Test 12] Vercel Zero-Config Deployment Verification");
 const vercelConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '../vercel.json'), 'utf-8'));
-assert(vercelConfig && vercelConfig.routes && vercelConfig.routes[0].dest === "/frontend/$1", "vercel.json properly configured for static routing");
+assert(vercelConfig && vercelConfig.outputDirectory === "frontend" && Array.isArray(vercelConfig.routes), "vercel.json properly configured for static routing");
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf-8'));
 assert(packageJson && packageJson.scripts && packageJson.scripts.build, "package.json properly configured with build scripts");
