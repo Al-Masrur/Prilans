@@ -73,6 +73,7 @@ function updateUserUI() {
     const btnPost = document.getElementById("btnPostProject");
     const btnAuth = document.getElementById("btnAuth");
     const badge = document.getElementById("myProposalsBadge");
+    const navAdmin = document.getElementById("nav-admin");
     
     if (!currentUser) {
         if (btnAuth) btnAuth.textContent = "Sign In";
@@ -83,6 +84,7 @@ function updateUserUI() {
         if (emailEl) emailEl.textContent = "Click to log in or create account";
         if (avatarEl) avatarEl.src = "https://api.dicebear.com/7.x/avataaars/svg?seed=guest";
         if (btnPost) btnPost.classList.add("hidden");
+        if (navAdmin) navAdmin.classList.add("hidden");
         if (badge) badge.textContent = "0";
         return;
     }
@@ -103,6 +105,19 @@ function updateUserUI() {
         } else {
             btnPost.classList.remove("hidden");
         }
+    }
+
+    // Strict Admin Center visibility (never expose to students or clients)
+    if (navAdmin) {
+        if (currentUser.role === "admin") {
+            navAdmin.classList.remove("hidden");
+        } else {
+            navAdmin.classList.add("hidden");
+        }
+    }
+
+    if (badge && currentUser.role !== "student") {
+        badge.textContent = "0";
     }
 
     // Update proposal, messages & notifications badges in sidebar
@@ -312,6 +327,10 @@ async function updateDynamicFilterCounts() {
 // NAVIGATION & TABS
 // ---------------------------------------------------------------------------
 function switchNav(nav) {
+    if (nav === "admin" && (!currentUser || currentUser.role !== "admin")) {
+        showToast("Access denied: Administrators only.", "error");
+        nav = "projects";
+    }
     activeNav = nav;
     
     // Highlight sidebar items
@@ -319,10 +338,11 @@ function switchNav(nav) {
     navItems.forEach(item => {
         const el = document.getElementById(`nav-${item}`);
         if (!el) return;
+        const isHidden = el.classList.contains("hidden");
         if (item === nav) {
-            el.className = "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-900 bg-slate-100 transition-all";
+            el.className = `${isHidden ? 'hidden ' : ''}flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-900 bg-slate-100 transition-all`;
         } else {
-            el.className = "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all";
+            el.className = `${isHidden ? 'hidden ' : ''}flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all`;
         }
     });
 
@@ -341,19 +361,31 @@ function switchNav(nav) {
         if (el) el.classList.add("hidden");
     });
 
+    const subheader = document.getElementById("resultsSubheader");
+    const resultsTitle = document.getElementById("resultsTitle");
+    const sortControls = document.getElementById("sortControls");
+    const showSubheader = ["projects", "recommendations", "freelancers", "companies", "proposals"].includes(nav);
+    if (subheader) subheader.classList.toggle("hidden", !showSubheader);
+    if (sortControls) sortControls.classList.toggle("hidden", nav !== "projects");
+
     if (nav === "projects") {
+        if (resultsTitle) resultsTitle.textContent = "Showing Results";
         document.getElementById("projectsContainer").classList.remove("hidden");
         loadProjects();
     } else if (nav === "recommendations") {
+        if (resultsTitle) resultsTitle.textContent = "Recommended Projects";
         document.getElementById("projectsContainer").classList.remove("hidden");
         loadRecommendedProjects();
     } else if (nav === "freelancers") {
+        if (resultsTitle) resultsTitle.textContent = "University Freelancers";
         document.getElementById("freelancersViewContainer").classList.remove("hidden");
         loadFreelancers();
     } else if (nav === "companies") {
+        if (resultsTitle) resultsTitle.textContent = "Partner Companies";
         document.getElementById("companiesViewContainer").classList.remove("hidden");
         loadCompanies();
     } else if (nav === "proposals") {
+        if (resultsTitle) resultsTitle.textContent = "My Applications";
         document.getElementById("proposalsViewContainer").classList.remove("hidden");
         loadMyApplications();
     } else if (nav === "messages") {
@@ -503,9 +535,12 @@ function renderProjects(projects, isRecommended = false) {
             <span class="skill-tag">${s}</span>
         `).join("");
 
-        const applyBtn = p.has_applied 
-            ? `<button disabled class="bg-emerald-50 text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1 border border-emerald-200"><i data-lucide="check" class="w-3.5 h-3.5"></i> Applied</button>`
-            : `<button onclick="openApplyModal(${p.id}, '${escapeQuote(p.title)}', '${escapeQuote(p.client_name)}', ${p.budget})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">Apply Now</button>`;
+        const isClientOrAdmin = currentUser && (currentUser.role === "client" || currentUser.role === "admin");
+        const applyBtn = isClientOrAdmin
+            ? `<button onclick="openClientProposalsModal(${p.id}, '${escapeQuote(p.title)}')" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-md transition-colors">Review (${proposalsCount})</button>`
+            : p.has_applied 
+                ? `<button disabled class="bg-emerald-50 text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1 border border-emerald-200"><i data-lucide="check" class="w-3.5 h-3.5"></i> Applied</button>`
+                : `<button onclick="openApplyModal(${p.id}, '${escapeQuote(p.title)}', '${escapeQuote(p.client_name)}', ${budgetVal})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-1.5 rounded-md transition-colors">Apply Now</button>`;
 
         const matchBadge = isRecommended && p.match_score ? `
             <span class="match-pill">
@@ -527,6 +562,7 @@ function renderProjects(projects, isRecommended = false) {
                         </div>
                         <div class="flex items-center gap-2 text-xs text-slate-400">
                             <span class="font-medium">${relativeTime}</span>
+                            ${isClientOrAdmin ? `
                             <div class="relative">
                                 <button onclick="toggleCardMenu(${p.id}, event)" class="p-1 hover:text-slate-800 text-slate-400 rounded-lg hover:bg-slate-50">
                                     <i data-lucide="more-horizontal" class="w-4 h-4"></i>
@@ -539,7 +575,7 @@ function renderProjects(projects, isRecommended = false) {
                                         <i data-lucide="users" class="w-3.5 h-3.5 text-slate-500"></i> Review Proposals
                                     </button>
                                 </div>
-                            </div>
+                            </div>` : ''}
                         </div>
                     </div>
 
@@ -721,6 +757,7 @@ async function loadMyApplications() {
     const container = document.getElementById("myProposalsList");
     try {
         const apps = await api.getMyApplications();
+        document.getElementById("resultsCount").textContent = `(${apps ? apps.length : 0})`;
         if (!apps || apps.length === 0) {
             container.innerHTML = `<div class="py-6 text-center text-xs text-slate-400">You have not submitted any proposals yet.</div>`;
             return;
@@ -1001,6 +1038,7 @@ async function loadFreelancers() {
     const container = document.getElementById("freelancersList");
     try {
         const students = await api.listStudents();
+        document.getElementById("resultsCount").textContent = `(${students.length})`;
         container.innerHTML = students.map(s => {
             const skillChips = (s.skills || []).map(sk => `
                 <span class="skill-tag">${sk.skill_name}</span>
@@ -1122,6 +1160,7 @@ async function loadCompanies() {
     const container = document.getElementById("companiesList");
     try {
         const companies = await api.getCompanies();
+        document.getElementById("resultsCount").textContent = `(${companies.length})`;
         if (!companies.length) {
             container.innerHTML = `<div class="col-span-full py-10 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">No companies found.</div>`;
             return;
@@ -1143,7 +1182,7 @@ async function loadCompanies() {
                                 <div>
                                     <h4 class="text-sm font-bold text-slate-900">${c.name}</h4>
                                     <p class="text-[11px] text-slate-500 flex items-center gap-1">
-                                        <i data-lucide="map-pin" class="w-3 h-3"></i> ${c.country} • <span class="text-emerald-600 font-semibold">Verified</span>
+                                        <i data-lucide="map-pin" class="w-3 h-3"></i> ${c.country} • <span class="text-emerald-600 font-semibold">Verified</span> • <span class="text-amber-500 font-bold">★ ${c.average_rating}</span> <span>(${c.review_count})</span>
                                     </p>
                                 </div>
                             </div>
@@ -1338,8 +1377,9 @@ async function markNotificationsRead() {
 // ---------------------------------------------------------------------------
 async function loadAdminDashboard() {
     if (!currentUser || currentUser.role !== "admin") {
-        showToast("Admin dashboard requires Administrator persona. Switched to Admin.", "info");
-        await quickSwitchUser("admin", false);
+        showToast("Access denied: Administrators only.", "error");
+        switchNav("projects");
+        return;
     }
     try {
         const stats = await api.getAdminStats();
@@ -1407,6 +1447,9 @@ async function loadAdminDashboard() {
 }
 
 async function deleteAdminProject(id) {
+    if (!currentUser || currentUser.role !== "admin") {
+        return showToast("Access denied: Administrators only.", "error");
+    }
     if (!confirm("Are you sure you want to remove this project?")) return;
     try {
         await api.deleteProject(id);
@@ -1419,6 +1462,9 @@ async function deleteAdminProject(id) {
 }
 
 async function deleteAdminUser(id) {
+    if (!currentUser || currentUser.role !== "admin") {
+        return showToast("Access denied: Administrators only.", "error");
+    }
     if (!confirm("Are you sure you want to delete this user from the platform?")) return;
     try {
         await api.deleteAdminUser(id);

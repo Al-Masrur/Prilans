@@ -196,7 +196,7 @@
             <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i>
             <span>Settings</span>
           </a>
-          <a href="#" onclick="switchNav('admin')" id="nav-admin" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-purple-700 hover:bg-purple-50 transition-all">
+          <a href="#" onclick="switchNav('admin')" id="nav-admin" class="hidden flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-purple-700 hover:bg-purple-50 transition-all">
             <i data-lucide="shield-check" class="w-4 h-4 text-purple-600"></i>
             <span>Admin Center</span>
           </a>
@@ -395,13 +395,13 @@
     <section class="flex-1 p-6 md:p-8 overflow-y-auto">
       
       <!-- Results Subheader -->
-      <div class="flex items-center justify-between mb-5">
+      <div id="resultsSubheader" class="flex items-center justify-between mb-5">
         <div class="flex items-center gap-2">
-          <h2 class="text-base font-bold text-slate-900">Showing Results</h2>
+          <h2 id="resultsTitle" class="text-base font-bold text-slate-900">Showing Results</h2>
           <span id="resultsCount" class="text-sm font-semibold text-slate-500">(0)</span>
         </div>
 
-        <div class="flex items-center gap-2.5">
+        <div id="sortControls" class="flex items-center gap-2.5">
           <span class="text-xs text-slate-500 font-medium">Sort by:</span>
           <select id="sortBy" onchange="applyFilters()" class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none shadow-2xs cursor-pointer">
             <option value="newest">Newest</option>
