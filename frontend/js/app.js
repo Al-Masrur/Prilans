@@ -447,6 +447,11 @@ function switchNav(nav) {
     if (subheader) subheader.classList.toggle("hidden", !showSubheader);
     if (sortControls) sortControls.classList.toggle("hidden", nav !== "projects");
 
+    // Hide filter sidebar on non-project views
+    if (nav !== "projects" && nav !== "recommendations") {
+        toggleFiltersSidebar(false);
+    }
+
     if (nav === "projects") {
         if (resultsTitle) resultsTitle.textContent = "Showing Results";
         document.getElementById("projectsContainer").classList.remove("hidden");
@@ -544,11 +549,54 @@ function getActiveFilters() {
     };
 }
 
+function toggleFiltersSidebar(forceState) {
+    const sidebar = document.getElementById("filtersSidebar");
+    const btn = document.getElementById("btnToggleFilters");
+    if (!sidebar) return;
+
+    const shouldShow = typeof forceState === "boolean" ? forceState : sidebar.classList.contains("hidden");
+    sidebar.classList.toggle("hidden", !shouldShow);
+
+    if (btn) {
+        if (shouldShow) {
+            btn.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-900 bg-slate-900 text-white text-xs font-semibold transition-colors shadow-2xs";
+            const icon = btn.querySelector("i");
+            if (icon) icon.className = "w-3.5 h-3.5 text-white";
+        } else {
+            btn.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors shadow-2xs";
+            const icon = btn.querySelector("i");
+            if (icon) icon.className = "w-3.5 h-3.5 text-slate-600";
+        }
+    }
+    if (typeof lucide !== "undefined") lucide.createIcons();
+}
+
+function updateActiveFiltersBadge() {
+    const badge = document.getElementById("activeFiltersBadge");
+    if (!badge) return;
+    let count = 0;
+    const cat = document.getElementById("filterCategory");
+    if (cat && cat.value && cat.value !== "All") count++;
+    const exp = document.querySelector('input[name="expLevel"]:checked');
+    if (exp && exp.value !== "Any") count++;
+    if (activeFilterProjectType) count++;
+    const bud = document.querySelector('input[name="budgetRange"]:checked');
+    if (bud && bud.value !== "any") count++;
+    const prop = document.querySelector('input[name="propRange"]:checked');
+    if (prop && prop.value !== "any") count++;
+    const loc = document.getElementById("locationInput");
+    if (loc && loc.value.trim()) count++;
+
+    badge.textContent = count;
+    badge.classList.toggle("hidden", count === 0);
+}
+
 function handleSearch() {
     loadProjects();
 }
 
 function applyFilters() {
+    updateActiveFiltersBadge();
     loadProjects();
 }
 
@@ -564,6 +612,7 @@ function resetFilters() {
     document.getElementById("btnTypeHourly").className = "py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all";
     document.getElementById("btnTypeFixed").className = "py-1 text-xs font-semibold rounded text-slate-600 hover:text-slate-900 transition-all";
     
+    updateActiveFiltersBadge();
     loadProjects();
     showToast("Filters reset to default");
 }
