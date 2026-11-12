@@ -89,8 +89,20 @@ async function initAuth() {
 }
 
 function updateUserUI() {
+    const btnPost = document.getElementById("btnPostProject");
+    const btnAuth = document.getElementById("btnAuth");
+    const badge = document.getElementById("myProposalsBadge");
+    
     if (!currentUser) {
-        document.getElementById("btnAuth").textContent = "Sign In / Register";
+        if (btnAuth) btnAuth.textContent = "Sign In / Register";
+        const nameEl = document.getElementById("sidebarUserName");
+        const emailEl = document.getElementById("sidebarUserEmail");
+        const avatarEl = document.getElementById("sidebarUserAvatar");
+        if (nameEl) nameEl.textContent = "Sign In / Register";
+        if (emailEl) emailEl.textContent = "Click to log in or create account";
+        if (avatarEl) avatarEl.src = "https://api.dicebear.com/7.x/avataaars/svg?seed=guest";
+        if (btnPost) btnPost.classList.add("hidden");
+        if (badge) badge.textContent = "0";
         return;
     }
     
@@ -99,14 +111,17 @@ function updateUserUI() {
     if (currentUser.avatar_url) {
         document.getElementById("sidebarUserAvatar").src = currentUser.avatar_url;
     }
-    document.getElementById("btnAuth").textContent = `Sign Out (${currentUser.name.split(' ')[0]})`;
+    if (btnAuth) {
+        btnAuth.textContent = `Sign Out (${currentUser.name.split(' ')[0]})`;
+    }
     
     // Toggle post job button depending on role
-    const btnPost = document.getElementById("btnPostProject");
-    if (currentUser.role === "student") {
-        btnPost.classList.add("hidden");
-    } else {
-        btnPost.classList.remove("hidden");
+    if (btnPost) {
+        if (currentUser.role === "student") {
+            btnPost.classList.add("hidden");
+        } else {
+            btnPost.classList.remove("hidden");
+        }
     }
 
     // Update proposal count in sidebar badge
@@ -555,6 +570,8 @@ async function loadRecommendedProjects() {
 // BONUS CHALLENGE: AI STUDENT MATCHING MECHANISM (5 Marks)
 // ---------------------------------------------------------------------------
 async function openBonusMatchModal(projectId, projectTitle) {
+    const cardMenu = document.getElementById(`card-menu-${projectId}`);
+    if (cardMenu) cardMenu.classList.add("hidden");
     document.getElementById("matchModalProjectTitle").textContent = projectTitle;
     document.getElementById("modalMatching").classList.remove("hidden");
     const container = document.getElementById("matchingCandidatesList");
@@ -681,6 +698,8 @@ async function loadMyApplications() {
 
 // Client Proposals Evaluation Modal (Advanced Feature: Status Updates - 5 Marks)
 async function openClientProposalsModal(projectId, title) {
+    const cardMenu = document.getElementById(`card-menu-${projectId}`);
+    if (cardMenu) cardMenu.classList.add("hidden");
     document.getElementById("clientReviewProjectTitle").textContent = `Proposals for: ${title}`;
     document.getElementById("modalClientReview").classList.remove("hidden");
     const container = document.getElementById("clientProposalsList");
@@ -774,7 +793,9 @@ async function submitNewProject(e) {
         });
         showToast("Project successfully published!");
         closeModal("modalPostProject");
-        loadProjects();
+        await loadDynamicCategories();
+        await updateDynamicFilterCounts();
+        await loadProjects();
     } catch (err) {
         showToast(err.message, "error");
     }
@@ -1072,3 +1093,10 @@ function closeModal(id) {
     const el = document.getElementById(id);
     if (el) el.classList.add("hidden");
 }
+
+// Close any open card menus when clicking outside
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".relative.group") && !e.target.closest("[id^='card-menu-']")) {
+        document.querySelectorAll("[id^='card-menu-']").forEach(el => el.classList.add("hidden"));
+    }
+});
